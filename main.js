@@ -14,6 +14,7 @@ let isRunning = true;
 let isProcessing = false;
 let lastResult = null;
 let geminiAI = null;
+let configWindow;
 
 // Função para ler a chave API do arquivo
 function readApiKeyFromFile() {
@@ -323,6 +324,30 @@ function createSolutionWindow() {
   }
 }
 
+function createConfigWindow() {
+    configWindow = new BrowserWindow({
+        width: 600,
+        height: 300,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false
+        },
+        parent: mainWindow,
+        modal: false,
+        alwaysOnTop: true,
+        resizable: false,
+        minimizable: false,
+        maximizable: false,
+        skipTaskbar: false
+    });
+
+    configWindow.loadFile('config.html');
+    configWindow.setMenu(null);
+    configWindow.on('closed', () => {
+        configWindow = null;
+    });
+}
+
 async function captureAndProcess() {
   if (isProcessing) return null;
   
@@ -435,24 +460,27 @@ function extractProblemInfo(text) {
 }
 
 // Função para inicializar o Gemini com a chave da API
-function initializeGemini(apiKey) {
+function initializeGemini() {
   try {
-    const cleanApiKey = apiKey.trim();
-    if (!cleanApiKey) {
-      throw new Error('Chave API vazia');
-    }
-    
-    // Salvar a chave no arquivo
-    if (!saveApiKeyToFile(cleanApiKey)) {
-      throw new Error('Erro ao salvar chave API');
+    const apiKey = readApiKeyFromFile();
+    if (!apiKey) {
+      if (!configWindow) {
+        createConfigWindow();
+      }
+      return null;
     }
 
-    console.log('Inicializando Gemini com chave:', cleanApiKey);
-    geminiAI = new GoogleGenAI({ apiKey: cleanApiKey });
-    return true;
+    const genAI = new GoogleGenAI({
+      apiKey: apiKey
+    });
+
+    return genAI.getGenerativeModel({ model: "gemini-pro" });
   } catch (error) {
     console.error('Erro ao inicializar Gemini:', error);
-    return false;
+    if (!configWindow) {
+      createConfigWindow();
+    }
+    return null;
   }
 }
 
@@ -556,7 +584,7 @@ Separe a solução da explicação usando a palavra 'Explicação:' em uma nova 
       
       return {
         solution: "Erro ao gerar solução",
-        explanation: `Erro específico da API: ${apiError.message}\n\nPor favor:\n1. Aguarde alguns segundos e tente novamente\n2. Se o erro persistir, crie uma nova chave`
+        explanation: `Ocorreu um erro: ${apiError.message}\n\nPor favor, verifique sua conexão com a internet e tente novamente.`
       };
     }
   } catch (error) {
@@ -570,86 +598,86 @@ Separe a solução da explicação usando a palavra 'Explicação:' em uma nova 
 
 // Adicionar handler para esconder a janela de solução
 ipcMain.on('hide-solution', () => {
-  console.log('Hide solution requested via IPC');
-  if (solutionWindow && !solutionWindow.isDestroyed()) {
-    solutionWindow.hide();
-  }
+    console.log('Hide solution requested via IPC');
+    if (solutionWindow && !solutionWindow.isDestroyed()) {
+        solutionWindow.hide();
+    }
 });
 
 app.whenReady().then(() => {
-  try {
-    createWindow();
-    createTray();
+    try {
+        createWindow();
+        createTray();
 
-    // Atalho para capturar tela
-    globalShortcut.register('CommandOrControl+Shift+P', async () => {
-      if (!isProcessing) {
-        const result = await captureAndProcess();
-        if (result) {
-          mainWindow.webContents.send('solution-update', result);
-        }
-      }
-    });
+        // Atalho para capturar tela
+        globalShortcut.register('CommandOrControl+Shift+P', async () => {
+            if (!isProcessing) {
+                const result = await captureAndProcess();
+                if (result) {
+                    mainWindow.webContents.send('solution-update', result);
+                }
+            }
+        });
 
-    // Atalho para mostrar/ocultar solução
-    globalShortcut.register('Alt+S', () => {
-      if (!solutionWindow) {
-        if (lastResult) {
-          createSolutionWindow();
-          solutionWindow.webContents.once('did-finish-load', () => {
-            solutionWindow.webContents.send('solution-update', lastResult);
-            solutionWindow.show();
-          });
-        }
-      } else if (solutionWindow.isDestroyed()) {
-        if (lastResult) {
-          createSolutionWindow();
-          solutionWindow.webContents.once('did-finish-load', () => {
-            solutionWindow.webContents.send('solution-update', lastResult);
-            solutionWindow.show();
-          });
-        }
-      } else {
-        if (solutionWindow.isVisible()) {
-          solutionWindow.hide();
-        } else {
-          solutionWindow.show();
-          solutionWindow.webContents.send('solution-update', lastResult);
-        }
-      }
-    });
+        // Atalho para mostrar/ocultar solução
+        globalShortcut.register('Alt+S', () => {
+            if (!solutionWindow) {
+                if (lastResult) {
+                    createSolutionWindow();
+                    solutionWindow.webContents.once('did-finish-load', () => {
+                        solutionWindow.webContents.send('solution-update', lastResult);
+                        solutionWindow.show();
+                    });
+                }
+            } else if (solutionWindow.isDestroyed()) {
+                if (lastResult) {
+                    createSolutionWindow();
+                    solutionWindow.webContents.once('did-finish-load', () => {
+                        solutionWindow.webContents.send('solution-update', lastResult);
+                        solutionWindow.show();
+                    });
+                }
+            } else {
+                if (solutionWindow.isVisible()) {
+                    solutionWindow.hide();
+                } else {
+                    solutionWindow.show();
+                    solutionWindow.webContents.send('solution-update', lastResult);
+                }
+            }
+        });
 
-    // Novo atalho para mostrar/ocultar janela principal
-    globalShortcut.register('Alt+P', () => {
-      if (mainWindow.isVisible()) {
-        mainWindow.hide();
-      } else {
+        // Novo atalho para mostrar/ocultar janela principal
+        globalShortcut.register('Alt+P', () => {
+            if (mainWindow.isVisible()) {
+                mainWindow.hide();
+            } else {
+                mainWindow.show();
+                mainWindow.focus();
+            }
+        });
+
+        // Atalho para sair
+        globalShortcut.register('CommandOrControl+Shift+Q', () => {
+            isRunning = false;
+            app.quit();
+        });
+
         mainWindow.show();
         mainWindow.focus();
-      }
-    });
-
-    // Atalho para sair
-    globalShortcut.register('CommandOrControl+Shift+Q', () => {
-      isRunning = false;
-      app.quit();
-    });
-
-    mainWindow.show();
-    mainWindow.focus();
-  } catch (error) {
-    console.error('Erro na inicialização:', error);
-  }
+    } catch (error) {
+        console.error('Erro na inicialização:', error);
+    }
 });
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
+    if (process.platform !== 'darwin') {
+        app.quit();
+    }
 });
 
 app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
-  }
-}); 
+    if (BrowserWindow.getAllWindows().length === 0) {
+        createWindow();
+    }
+});
