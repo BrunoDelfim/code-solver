@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Configurar API Gemini</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        h2 {
+            color: #333;
+            margin-top: 0;
+            text-align: center;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .help-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Configurar API Gemini</h2>
+        <div class="input-group">
+            <label for="apiKey">Chave da API Gemini:</label>
+            <input type="text" id="apiKey" placeholder="Cole sua chave da API aqui">
+            <div class="help-text">
+                Obtenha sua chave da API em: <a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio</a>
+            </div>
+        </div>
+        <button onclick="submitApiKey()">Salvar</button>
+    </div>
+
+    <script>
+        function submitApiKey() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            if (apiKey) {
+                require('electron').ipcRenderer.send('submit-api-key', apiKey);
+            } else {
+                alert('Por favor, insira uma chave de API válida.');
+            }
+        }
+    </script>
+</body>
+</html> 

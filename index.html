@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LeetCode Solver</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #1a73e8;
+            margin-bottom: 20px;
+        }
+        .shortcuts {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .shortcut {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        .key {
+            background-color: #e8eaed;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-right: 10px;
+            font-family: monospace;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #e8f0fe;
+            display: none;
+        }
+        .status.show {
+            display: block;
+        }
+        .status.error {
+            background-color: #fce8e6;
+            color: #d93025;
+        }
+        .status.success {
+            background-color: #e6f4ea;
+            color: #137333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>LeetCode Solver</h1>
+        
+        <div class="shortcuts">
+            <h3>Atalhos:</h3>
+            <div class="shortcut">
+                <span class="key">Alt+P</span>
+                <span>Mostrar/ocultar janela principal</span>
+            </div>
+            <div class="shortcut">
+                <span class="key">Ctrl+Shift+P</span>
+                <span>Capturar tela e processar quando houver um desafio</span>
+            </div>
+            <div class="shortcut">
+                <span class="key">Alt+S</span>
+                <span>Mostrar/ocultar solução</span>
+            </div>
+            <div class="shortcut">
+                <span class="key">Ctrl+Shift+Q</span>
+                <span>Fechar aplicativo</span>
+            </div>
+        </div>
+
+        <div id="status" class="status">
+            Aguardando...
+        </div>
+    </div>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+        const statusDiv = document.getElementById('status');
+
+        ipcRenderer.on('status-update', (event, data) => {
+            statusDiv.textContent = data.status;
+            statusDiv.className = 'status show';
+            
+            if (data.status.toLowerCase().includes('erro')) {
+                statusDiv.classList.add('error');
+            } else if (data.status.toLowerCase().includes('pronta')) {
+                statusDiv.classList.add('success');
+            } else {
+                statusDiv.classList.remove('error', 'success');
+            }
+        });
+
+        ipcRenderer.on('solution-update', (event, data) => {
+            // Aqui você pode atualizar a interface com a solução
+            console.log('Solução recebida:', data);
+        });
+    </script>
+</body>
+</html> 
