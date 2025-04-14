@@ -1,118 +1,66 @@
-# Code Solver
+@echo off
+setlocal enabledelayedexpansion
 
-A desktop application that uses AI to analyze and solve programming problems through screen captures.
+:: Change to the script directory
+cd /d "%~dp0"
 
-The software is designed to help developers during live coding sessions, as screen content often doesn't appear properly in recordings or live streams. With Code Solver, you can capture the code and get instant AI-generated solutions without interrupting the flow of your presentation.
+echo Cleaning previous files...
+if exist "dist" rd /s /q "dist"
+if exist "node_modules" rd /s /q "node_modules"
+if exist "package-lock.json" del /f /q "package-lock.json"
+if exist "out" rd /s /q "out"
 
-## 🚀 Features
+echo.
+echo Generating Code Solver installer...
+echo =====================================
+echo.
 
-- 📸 Screen capture with integrated OCR
-- 🤖 Problem analysis using AI (Google Gemini)
-- 💡 Automatic solution generation in multiple languages
-- 🔍 Floating interface for quick viewing
-- ⌨️ Global shortcuts for all functions
-- 🔒 Content protection on windows
-- 🎯 Support for multiple captures
+:: Verify Node.js
+where node >nul 2>&1
+if %errorlevel% neq 0 (
+    echo Error: Node.js not found.
+    echo Please install Node.js before generating the installer.
+    pause
+    exit /b 1
+)
 
-## ⚡ Shortcuts
+:: Create temporary build directory
+set "BUILD_DIR=%TEMP%\CodeSolverBuild"
+if exist "%BUILD_DIR%" rd /s /q "%BUILD_DIR%"
+mkdir "%BUILD_DIR%"
 
-- `Ctrl + Shift + P`: Capture screen  
-- `Alt + S`: Show/hide solution  
-- `Alt + P`: Show/hide main window  
-- `Ctrl + Shift + Q`: Exit application  
-- `Alt + Ctrl + P`: Alternative screen capture  
-- `Ctrl + Enter`: Process captures
+:: Copy necessary files to the build
+echo Preparing files...
+xcopy /y "src\*.js" "%BUILD_DIR%\src\" >nul
+xcopy /y "src\scripts\*.js" "%BUILD_DIR%\src\scripts\" >nul
+xcopy /y "public\*.html" "%BUILD_DIR%\public\" >nul
+xcopy /y "package.json" "%BUILD_DIR%\" >nul
+if exist "assets" xcopy /y /e /i "assets" "%BUILD_DIR%\assets\" >nul
 
-## 🛠️ Technologies
+:: Change to the build directory
+cd /d "%BUILD_DIR%"
 
-- Electron  
-- Node.js  
-- Tesseract.js (OCR)  
-- Google Gemini API  
-- HTML/CSS/JavaScript
+:: Install dependencies
+echo Installing dependencies...
+call npm install
 
-## 📋 Requirements
+:: Generate the installer
+echo.
+echo Generating the installer...
+call npm run build
 
-- Node.js 14+  
-- Google Gemini API key  
-- Windows 10/11
+:: Copy the generated installer back
+cd /d "%~dp0"
+if not exist "dist" mkdir "dist"
+xcopy /y "%BUILD_DIR%\dist\*Setup*.exe" "dist\" >nul 2>&1
 
-## 🔧 Installation
+:: Clean temporary files
+rd /s /q "%BUILD_DIR%"
 
-1. Clone the repository:
-```bash
-git clone https://github.com/your-username/code-solver.git
-cd code-solver
-```
-
-2. Install the dependencies::
-```bash
-npm install
-```
-
-3. Run the application:
-```bash
-npm start
-```
-
-## 📦 Generating the Installer
-
-1. Run the build script:
-```bash
-./generateInstaller.bat
-```
-
-2. The installer will be generated in the `dist` folder
-
-## 📁 Project Structure
-
-```
-code-solver/
-├── src/                    # Main source code
-│   ├── main.js            # Main Electron file
-│   └── scripts/           # Auxiliary scripts
-│       ├── capture.js     # Screen capture script
-│       ├── ocr.js         # OCR script
-│       └── gemini.js      # Gemini integration script
-│
-├── public/                # Public files/interface
-│   ├── index.html         # Main page
-│   ├── about.html         # About page
-│   └── api-key.html       # API key configuration page
-│
-├── assets/                # Static resources
-│   └── icon.ico           # Application icon
-│
-├── package.json           # Project configuration
-└── generateInstaller.bat  # Installer generation script
-```
-
-## ⚙️ Configuration
-
-1. Get an API key from Google Gemini at: https://makersuite.google.com/app/apikey
-2. On the first run, the application will request the API key
-3. The key will be saved at: %APPDATA%/Code Solver/gemini_api_key.txt
-
-## 🔐 Security
-
-- API keys are securely stored locally
-- Solution windows are protected against screen capture
-- Sensitive content is protected from leaks
-
-## 🤝 Contributing
-
-1. Fork the project
-2. Create a branch for your feature (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📝 License
-
-This project is under the ISC license. See the `LICENSE` file for more details.
-
-## ✨ Acknowledgments
-
-- Google Gemini for the AI API
-- Tesseract.js for the OCR technology
-- Electron for the framework
+echo.
+echo Installer generated successfully!
+echo The installer file is in the "dist" folder
+echo.
+dir "dist"
+echo.
+pause 

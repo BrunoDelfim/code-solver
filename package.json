@@ -1,46 +1,56 @@
 {
-  "name": "code-solver",
-  "version": "1.0.0",
-  "description": "Application to solve code challenges",
-  "main": "src/main.js",
-  "scripts": {
-    "start": "electron .",
-    "build": "electron-builder --win --x64",
-    "postinstall": "electron-builder install-app-deps"
-  },
-  "author": "bdelfim",
-  "license": "ISC",
-  "devDependencies": {
-    "electron": "^28.1.0",
-    "electron-builder": "^24.9.1"
-  },
-  "dependencies": {
-    "tesseract.js": "^5.0.4",
-    "@google/genai": "^0.2.0"
-  },
-  "build": {
-    "appId": "com.code.solver",
-    "productName": "Code Solver",
-    "directories": {
-      "output": "dist"
+    "name": "code-solver",
+    "version": "1.0.0",
+    "description": "Application to solve code challenges",
+    "main": "src/main.js",
+    "scripts": {
+      "start": "electron .",
+      "build": "electron-builder --win --x64",
+      "postinstall": "electron-builder install-app-deps"
     },
-    "win": {
-      "target": [
-        {
-          "target": "nsis",
-          "arch": ["x64"]
-        }
-      ]
+    "author": "bdelfim",
+    "license": "ISC",
+    "devDependencies": {
+      "electron": "^28.1.0",
+      "electron-builder": "^24.9.1"
     },
-    "nsis": {
-      "oneClick": true,
-      "perMachine": true,
-      "createDesktopShortcut": true,
-      "createStartMenuShortcut": true,
-      "shortcutName": "Code Solver",
-      "deleteAppDataOnUninstall": true,
-      "allowToChangeInstallationDirectory": false,
-      "runAfterFinish": true
+    "dependencies": {
+      "tesseract.js": "^5.0.4",
+      "@google/genai": "^0.2.0"
+    },
+    "build": {
+      "appId": "com.code.solver",
+      "productName": "Code Solver",
+      "directories": {
+        "output": "dist"
+      },
+      "win": {
+        "target": [
+          {
+            "target": "nsis",
+            "arch": ["x64"]
+          }
+        ],
+        "icon": "assets/icon.ico"
+      },
+      "files": [
+        "src/**/*",
+        "public/**/*",
+        "assets/**/*",
+        "package.json"
+      ],
+      "nsis": {
+        "oneClick": false,
+        "perMachine": true,
+        "allowToChangeInstallationDirectory": true,
+        "createDesktopShortcut": true,
+        "createStartMenuShortcut": true,
+        "shortcutName": "Code Solver",
+        "menuCategory": "Code Solver",
+        "deleteAppDataOnUninstall": true,
+        "uninstallDisplayName": "Code Solver",
+        "removeDefaultUninstallWelcomePage": false,
+        "include": null
+      }
     }
-  }
-} 
+  } 
