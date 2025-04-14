@@ -1,56 +1,118 @@
-# LeetCode Solver
+# Code Solver
 
-Um aplicativo para Windows que ajuda a resolver desafios do LeetCode automaticamente.
+A desktop application that uses AI to analyze and solve programming problems through screen captures.
 
-## Funcionalidades
+The software is designed to help developers during live coding sessions, as screen content often doesn't appear properly in recordings or live streams. With Code Solver, you can capture the code and get instant AI-generated solutions without interrupting the flow of your presentation.
 
-- Captura de tela automáticamente para extrair o enunciado da questão
-- Reconhecimento de texto em inglês e português
-- Geração de soluções com explicações em português
-- Interface minimalista e não intrusiva
-- Atalhos de teclado para todas as funcionalidades
+## 🚀 Features
 
-## Instalação
+- 📸 Screen capture with integrated OCR
+- 🤖 Problem analysis using AI (Google Gemini)
+- 💡 Automatic solution generation in multiple languages
+- 🔍 Floating interface for quick viewing
+- ⌨️ Global shortcuts for all functions
+- 🔒 Content protection on windows
+- 🎯 Support for multiple captures
 
-1. Baixe o instalador do aplicativo
-2. Execute o instalador e siga as instruções
-3. Um atalho será criado na área de trabalho
+## ⚡ Shortcuts
 
-## Atalhos
+- `Ctrl + Shift + P`: Capture screen  
+- `Alt + S`: Show/hide solution  
+- `Alt + P`: Show/hide main window  
+- `Ctrl + Shift + Q`: Exit application  
+- `Alt + Ctrl + P`: Alternative screen capture  
+- `Ctrl + Enter`: Process captures
 
-- `Ctrl + Shift + P`: Captura a tela e processa a questão atual
-- `Alt + S`: Mostra/oculta a janela de solução
-- `Alt + P`: Mostra a janela do software
-- `Ctrl + Shift + Q`: Encerra o aplicativo
+## 🛠️ Technologies
 
-## Como usar
+- Electron  
+- Node.js  
+- Tesseract.js (OCR)  
+- Google Gemini API  
+- HTML/CSS/JavaScript
 
-1. Abra o LeetCode e navegue até a questão desejada
-2. Pressione `Ctrl + Shift + P` para capturar e processar a questão
-3. A solução será gerada e poderá ser visualizada pressionando `Alt + M`
-4. Para encerrar o aplicativo, pressione `Ctrl + Shift + Q`
+## 📋 Requirements
 
-## Requisitos
+- Node.js 14+  
+- Google Gemini API key  
+- Windows 10/11
 
-- Windows 10 ou superior (64 bits)
-- 4GB de RAM mínimo
-- 500MB de espaço em disco
+## 🔧 Installation
 
-## Desenvolvimento
+1. Clone the repository:
+```bash
+git clone https://github.com/your-username/code-solver.git
+cd code-solver
+```
 
-Para desenvolver ou modificar o aplicativo:
+2. Install the dependencies::
+```bash
+npm install
+```
 
-1. Clone o repositório
-2. Instale as dependências:
-   ```bash
-   npm install
-   ```
-3. Execute em modo desenvolvimento:
-   ```bash
-   npm start
-   ```
-4. Para construir o instalador:
-   ```bash
-   npm run build
-   ou use o generateInstaller.bat
-   ``` 
+3. Run the application:
+```bash
+npm start
+```
+
+## 📦 Generating the Installer
+
+1. Run the build script:
+```bash
+./generateInstaller.bat
+```
+
+2. The installer will be generated in the `dist` folder
+
+## 📁 Project Structure
+
+```
+code-solver/
+├── src/                    # Main source code
+│   ├── main.js            # Main Electron file
+│   └── scripts/           # Auxiliary scripts
+│       ├── capture.js     # Screen capture script
+│       ├── ocr.js         # OCR script
+│       └── gemini.js      # Gemini integration script
+│
+├── public/                # Public files/interface
+│   ├── index.html         # Main page
+│   ├── about.html         # About page
+│   └── api-key.html       # API key configuration page
+│
+├── assets/                # Static resources
+│   └── icon.ico           # Application icon
+│
+├── package.json           # Project configuration
+└── generateInstaller.bat  # Installer generation script
+```
+
+## ⚙️ Configuration
+
+1. Get an API key from Google Gemini at: https://makersuite.google.com/app/apikey
+2. On the first run, the application will request the API key
+3. The key will be saved at: %APPDATA%/Code Solver/gemini_api_key.txt
+
+## 🔐 Security
+
+- API keys are securely stored locally
+- Solution windows are protected against screen capture
+- Sensitive content is protected from leaks
+
+## 🤝 Contributing
+
+1. Fork the project
+2. Create a branch for your feature (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is under the ISC license. See the `LICENSE` file for more details.
+
+## ✨ Acknowledgments
+
+- Google Gemini for the AI API
+- Tesseract.js for the OCR technology
+- Electron for the framework

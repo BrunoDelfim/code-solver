@@ -1,14 +1,14 @@
 {
-  "name": "leetcode-solver",
+  "name": "code-solver",
   "version": "1.0.0",
-  "description": "Aplicativo para resolver desafios do LeetCode",
-  "main": "main.js",
+  "description": "Application to solve code challenges",
+  "main": "src/main.js",
   "scripts": {
     "start": "electron .",
     "build": "electron-builder --win --x64",
     "postinstall": "electron-builder install-app-deps"
   },
-  "author": "",
+  "author": "bdelfim",
   "license": "ISC",
   "devDependencies": {
     "electron": "^28.1.0",
@@ -19,8 +19,8 @@
     "@google/genai": "^0.2.0"
   },
   "build": {
-    "appId": "com.leetcode.solver",
-    "productName": "LeetCode Solver",
+    "appId": "com.code.solver",
+    "productName": "Code Solver",
     "directories": {
       "output": "dist"
     },
@@ -37,7 +37,7 @@
       "perMachine": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "LeetCode Solver",
+      "shortcutName": "Code Solver",
       "deleteAppDataOnUninstall": true,
       "allowToChangeInstallationDirectory": false,
       "runAfterFinish": true
