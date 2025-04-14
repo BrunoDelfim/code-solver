@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Code Solver</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .menu-bar {
+            background-color: #f8f9fa;
+            padding: 10px;
+            margin: -20px -20px 20px -20px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            gap: 20px;
+        }
+        .menu-item {
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 4px;
+            color: #333;
+        }
+        .menu-item:hover {
+            background-color: #e9ecef;
+        }
+        h1 {
+            color: #0066ff;
+            margin-bottom: 30px;
+        }
+        .shortcuts {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .shortcut-row {
+            display: flex;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        .shortcut-key {
+            background-color: #f8f9fa;
+            padding: 5px 10px;
+            border-radius: 4px;
+            margin-right: 10px;
+            font-family: monospace;
+            border: 1px solid #ddd;
+            min-width: 80px;
+            text-align: center;
+        }
+        .shortcut-description {
+            color: #666;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #e8f0fe;
+            display: none;
+        }
+        .status.show {
+            display: block;
+        }
+        .status.error {
+            background-color: #fce8e6;
+            color: #d93025;
+        }
+        .status.success {
+            background-color: #e6f4ea;
+            color: #137333;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu-bar">
+        <div class="menu-item" onclick="openApiKeyWindow()">Manage API</div>
+        <div class="menu-item" onclick="openAboutWindow()">About</div>
+    </div>
+
+    <h1>Code Solver</h1>
+
+    <div class="shortcuts">
+        <h2>Shortcuts:</h2>
+        <div class="shortcut-row">
+            <div class="shortcut-key">Alt+P</div>
+            <div class="shortcut-description">Show/hide main window</div>
+        </div>
+        <div class="shortcut-row">
+            <div class="shortcut-key">Ctrl+Alt+P</div>
+            <div class="shortcut-description">Capture part of the text (can use multiple times)</div>
+        </div>
+        <div class="shortcut-row">
+            <div class="shortcut-key">Ctrl+Enter</div>
+            <div class="shortcut-description">Process all captures</div>
+        </div>
+        <div class="shortcut-row">
+            <div class="shortcut-key">Alt+S</div>
+            <div class="shortcut-description">Show/hide solution</div>
+        </div>
+        <div class="shortcut-row">
+            <div class="shortcut-key">Ctrl+Shift+Q</div>
+            <div class="shortcut-description">Close application</div>
+        </div>
+    </div>
+
+    <div id="status" class="status">
+        Waiting...
+    </div>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+        const statusDiv = document.getElementById('status');
+
+        function openApiKeyWindow() {
+            ipcRenderer.send('open-api-window');
+        }
+
+        function openAboutWindow() {
+            ipcRenderer.send('open-about-window');
+        }
+
+        ipcRenderer.on('status-update', (event, data) => {
+            if (statusDiv) {
+                statusDiv.textContent = data.status;
+                statusDiv.className = 'status show';
+                
+                if (data.error || data.status.toLowerCase().includes('erro')) {
+                    statusDiv.classList.add('error');
+                } else if (data.status.toLowerCase().includes('pronta')) {
+                    statusDiv.classList.add('success');
+                } else {
+                    statusDiv.classList.remove('error', 'success');
+                }
+            }
+        });
+
+        ipcRenderer.on('solution-update', (event, data) => {
+            console.log('Solution:', data);
+        });
+    </script>
+</body>
+</html> 

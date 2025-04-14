@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Capture Status</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-family: Arial, sans-serif;
+            border-radius: 10px;
+            user-select: none;
+            -webkit-app-region: drag;
+        }
+        .container {
+            text-align: center;
+        }
+        .status {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .count {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+            margin: 5px 0;
+        }
+        .processing {
+            font-size: 12px;
+            color: #FFA500;
+            margin: 5px 0;
+        }
+        .hint {
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="status">Captures:</div>
+        <div class="count">0</div>
+        <div class="processing"></div>
+        <div class="hint">Ctrl+Enter to process</div>
+    </div>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+        
+        ipcRenderer.on('capture-update', (event, data) => {
+            document.querySelector('.count').textContent = data.total;
+            if (data.processing) {
+                document.querySelector('.processing').textContent = data.processing;
+                document.querySelector('.hint').style.display = 'none';
+            } else {
+                document.querySelector('.processing').textContent = 'Ready to process';
+                document.querySelector('.hint').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html> 

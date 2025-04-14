@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Configure Gemini API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        h2 {
+            color: #333;
+            margin-top: 0;
+            text-align: center;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .help-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Configure Gemini API</h2>
+        <div class="input-group">
+            <label for="apiKey">Gemini API Key:</label>
+            <input type="text" id="apiKey" placeholder="Enter your API key here">
+            <div class="help-text">
+                Get your API key at: <a href="#" onclick="openApiKeyLink()">Google AI Studio</a>
+            </div>
+        </div>
+        <button onclick="submitApiKey()">Save</button>
+    </div>
+
+    <script>
+        const { shell, ipcRenderer } = require('electron');
+
+        function openApiKeyLink() {
+            shell.openExternal('https://makersuite.google.com/app/apikey');
+        }
+
+        function submitApiKey() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            if (apiKey) {
+                ipcRenderer.send('submit-api-key', apiKey);
+            } else {
+                alert('Please enter a valid API key.');
+            }
+        }
+
+        ipcRenderer.on('load-saved-key', (event, savedKey) => {
+            document.getElementById('apiKey').value = savedKey;
+        });
+    </script>
+</body>
+</html> 
