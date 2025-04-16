@@ -1,1 +1,6 @@
 dist/
+node_modules/
+eng.treineddata
+package-lock.json
+eng.traineddata
+por.traineddata

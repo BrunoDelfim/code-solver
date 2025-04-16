@@ -1,4 +1,26 @@
-const { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain, desktopCapturer } = require('electron');
+const { app } = require('electron');
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+  app.quit();
+  process.exit(0);
+} else {
+  app.on('second-instance', () => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.focus();
+    }
+  });
+}
+
+require('electron-reload')(
+  [__dirname, require('path').join(__dirname, '..', 'public')],
+  {
+    electron: require(require('path').join(__dirname, '..', 'node_modules', 'electron'))
+  }
+);
+
+const { BrowserWindow, Tray, Menu, globalShortcut, ipcMain, desktopCapturer } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { createWorker } = require('tesseract.js');
@@ -565,8 +587,6 @@ async function requestApiKey() {
       resizable: false,
       minimizable: false,
       maximizable: false,
-      parent: mainWindow,
-      modal: true,
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: false
