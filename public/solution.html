@@ -103,25 +103,26 @@
 
         let lastSolution = null;
 
-        ipcRenderer.on('solution-update', (event, data) => {
+        ipcRenderer.on('update-solution', (event, data) => {
+            console.log('Received solution:', data); // Debug log
             lastSolution = data;
-            updateContent(data);
+            if (typeof data === 'string') {
+                // Se receber apenas string, assume que é a solução
+                document.getElementById('solution').textContent = data;
+                document.getElementById('explanation').textContent = '';
+            } else if (data && typeof data === 'object') {
+                // Se receber objeto, extrai solution e explanation
+                document.getElementById('solution').textContent = data.solution || 'No solution available';
+                document.getElementById('explanation').textContent = data.explanation || '';
+            }
         });
 
-        function updateContent(data) {
-            if (data) {
-                document.getElementById('solution').textContent = data.solution;
-                document.getElementById('explanation').textContent = data.explanation;
-            }
-        }
-
-        ipcRenderer.on('check-visibility', () => {
+        // Debug: Mostra o último resultado recebido
+        window.addEventListener('load', () => {
             if (lastSolution) {
-                updateContent(lastSolution);
+                console.log('Last solution:', lastSolution);
             }
         });
-
-        document.body.style.webkitAppRegion = 'drag';
     </script>
 </body>
 </html> 

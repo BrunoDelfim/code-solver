@@ -39,6 +39,9 @@
             border-radius: 4px;
             box-sizing: border-box;
         }
+        input[type="text"]:invalid {
+            border-color: #ff4444;
+        }
         button {
             width: 100%;
             padding: 10px;
@@ -52,10 +55,20 @@
         button:hover {
             background-color: #45a049;
         }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
         .help-text {
             font-size: 12px;
             color: #666;
             margin-top: 5px;
+        }
+        .error-message {
+            color: #ff4444;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
         }
     </style>
 </head>
@@ -64,12 +77,13 @@
         <h2>Configure Gemini API</h2>
         <div class="input-group">
             <label for="apiKey">Gemini API Key:</label>
-            <input type="text" id="apiKey" placeholder="Enter your API key here">
+            <input type="text" id="apiKey" placeholder="Enter your API key here" required>
+            <div class="error-message" id="errorMessage">Please enter a valid API key.</div>
             <div class="help-text">
                 Get your API key at: <a href="#" onclick="openApiKeyLink()">Google AI Studio</a>
             </div>
         </div>
-        <button onclick="submitApiKey()">Save</button>
+        <button onclick="submitApiKey()" id="saveButton">Save</button>
     </div>
 
     <script>
@@ -79,18 +93,42 @@
             shell.openExternal('https://makersuite.google.com/app/apikey');
         }
 
-        function submitApiKey() {
-            const apiKey = document.getElementById('apiKey').value.trim();
-            if (apiKey) {
-                ipcRenderer.send('submit-api-key', apiKey);
+        function validateApiKey(key) {
+            return key && key.trim().length > 0;
+        }
+
+        function updateButtonState() {
+            const apiKey = document.getElementById('apiKey').value;
+            const saveButton = document.getElementById('saveButton');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            if (validateApiKey(apiKey)) {
+                saveButton.disabled = false;
+                errorMessage.style.display = 'none';
             } else {
-                alert('Please enter a valid API key.');
+                saveButton.disabled = true;
+                errorMessage.style.display = 'block';
             }
         }
 
+        function submitApiKey() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            if (validateApiKey(apiKey)) {
+                ipcRenderer.send('submit-api-key', apiKey);
+            }
+        }
+
+        document.getElementById('apiKey').addEventListener('input', updateButtonState);
+        document.getElementById('apiKey').addEventListener('change', updateButtonState);
+
         ipcRenderer.on('load-saved-key', (event, savedKey) => {
-            document.getElementById('apiKey').value = savedKey;
+            const apiKeyInput = document.getElementById('apiKey');
+            apiKeyInput.value = savedKey;
+            updateButtonState();
         });
+
+        // Inicializa o estado do botão
+        updateButtonState();
     </script>
 </body>
 </html> 
