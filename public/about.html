@@ -48,8 +48,8 @@
     </div>
 
     <script>
-        const { CONSTANTS } = require('../src/config/constants');
-        document.getElementById('app-version').textContent = CONSTANTS.APP.VERSION;
+        const { version } = require('../package.json');
+        document.getElementById('app-version').textContent = version;
     </script>
 </body>
 </html> 
