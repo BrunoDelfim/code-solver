@@ -25,10 +25,16 @@ function createMainWindow() {
 
   mainWindow.setContentProtection(true);
   mainWindow.setVisibleOnAllWorkspaces(true);
-  mainWindow.loadFile(path.join(PATHS.PUBLIC, 'index.html'));
+  mainWindow.loadFile(path.join(PATHS.PUBLIC, 'index.html')).catch(error => {
+    console.error('Error loading index.html:', error);
+  });
   mainWindow.setMenu(null);
 
-  createTray();
+  try {
+    createTray();
+  } catch (error) {
+    console.error('Error creating tray:', error);
+  }
 
   mainWindow.on('close', (event) => {
     if (!app.isQuitting) {
@@ -55,44 +61,53 @@ function createTray() {
     return;
   }
 
-  const iconPath = path.join(PATHS.ASSETS, 'icon.ico');
-  tray = new Tray(iconPath);
+  try {
+    const iconPath = path.join(PATHS.ASSETS, 'icon.ico');
+    if (!require('fs').existsSync(iconPath)) {
+      console.error('Icon file not found:', iconPath);
+      return;
+    }
 
-  const contextMenu = Menu.buildFromTemplate([
-    {
-      label: 'Mostrar/Ocultar',
-      click: () => {
-        if (mainWindow.isVisible()) {
-          mainWindow.hide();
-        } else {
-          mainWindow.show();
-          mainWindow.focus();
+    tray = new Tray(iconPath);
+
+    const contextMenu = Menu.buildFromTemplate([
+      {
+        label: 'Mostrar/Ocultar',
+        click: () => {
+          if (mainWindow.isVisible()) {
+            mainWindow.hide();
+          } else {
+            mainWindow.show();
+            mainWindow.focus();
+          }
+        }
+      },
+      {
+        type: 'separator'
+      },
+      {
+        label: 'Sair',
+        click: () => {
+          app.isQuitting = true;
+          app.quit();
         }
       }
-    },
-    {
-      type: 'separator'
-    },
-    {
-      label: 'Sair',
-      click: () => {
-        app.isQuitting = true;
-        app.quit();
+    ]);
+
+    tray.setToolTip('Ghost');
+    tray.setContextMenu(contextMenu);
+
+    tray.on('double-click', () => {
+      if (mainWindow.isVisible()) {
+        mainWindow.hide();
+      } else {
+        mainWindow.show();
+        mainWindow.focus();
       }
-    }
-  ]);
-
-  tray.setToolTip('Ghost');
-  tray.setContextMenu(contextMenu);
-
-  tray.on('double-click', () => {
-    if (mainWindow.isVisible()) {
-      mainWindow.hide();
-    } else {
-      mainWindow.show();
-      mainWindow.focus();
-    }
-  });
+    });
+  } catch (error) {
+    console.error('Error in createTray:', error);
+  }
 }
 
 function getMainWindow() {

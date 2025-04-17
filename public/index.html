@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Code Solver</title>
+    <title>Code Solver v${version}</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -80,7 +80,7 @@
         <div class="menu-item" onclick="openAboutWindow()">About</div>
     </div>
 
-    <h1>Code Solver</h1>
+    <h1>Code Solve</h1>
 
     <div class="shortcuts">
         <h2>Shortcuts:</h2>
@@ -112,10 +112,10 @@
 
     <script>
         const { ipcRenderer } = require('electron');
-        const { CONSTANTS } = require('../src/config/constants');
+        const { version } = require('../package.json');
         const statusDiv = document.getElementById('status');
 
-        document.title = `Code Solver v${CONSTANTS.APP.VERSION}`;
+        document.title = `Code Solver v${version}`;
 
         function openApiKeyWindow() {
             ipcRenderer.send('open-api-window');

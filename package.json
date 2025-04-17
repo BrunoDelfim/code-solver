@@ -1,6 +1,6 @@
 {
     "name": "code-solver",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Application to solve code challenges",
     "main": "src/main.js",
     "scripts": {
@@ -24,8 +24,7 @@
         "appId": "com.code.solver",
         "productName": "Code Solver",
         "directories": {
-            "output": "dist",
-            "buildResources": "."
+            "output": "dist"
         },
         "win": {
             "target": [
@@ -44,16 +43,7 @@
             "assets/**/*",
             "package.json"
         ],
-        "extraResources": [
-            {
-                "from": "public",
-                "to": "public"
-            },
-            {
-                "from": "assets",
-                "to": "assets"
-            }
-        ],
+        "asar": false,
         "nsis": {
             "oneClick": false,
             "perMachine": true,
