@@ -72,7 +72,7 @@ function clearCapturedTexts() {
   updateCaptureStatus({
     total: 0,
     processing: 'Ready to capture',
-    hint: 'Press Alt+S to capture'
+    hint: 'Press Ctrl+Shift+P or Ctrl+Alt+P to capture'
   });
 }
 

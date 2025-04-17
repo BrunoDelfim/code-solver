@@ -4,10 +4,8 @@ const path = require('path');
 const appDataPath = path.join(process.env.APPDATA, 'Code Solver');
 
 if (fs.existsSync(appDataPath)) {
-    // Lista todos os arquivos no diretório
     const files = fs.readdirSync(appDataPath);
     
-    // Remove cada arquivo
     files.forEach(file => {
         const filePath = path.join(appDataPath, file);
         try {
@@ -18,7 +16,6 @@ if (fs.existsSync(appDataPath)) {
         }
     });
 
-    // Remove o diretório
     try {
         fs.rmdirSync(appDataPath);
         console.log(`Removed directory: ${appDataPath}`);
