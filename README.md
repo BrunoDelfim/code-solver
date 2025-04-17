@@ -57,9 +57,9 @@ npm start
 
 ## 📦 Generating the Installer
 
-1. Run the build script:
+1. Run the command on terminal:
 ```bash
-./generateInstaller.bat
+npm run build
 ```
 
 2. The installer will be generated in the `dist` folder

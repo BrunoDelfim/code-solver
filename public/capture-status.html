@@ -40,23 +40,22 @@
 </head>
 <body>
     <div class="container">
-        <div class="status">Captures:</div>
-        <div class="count">0</div>
+        <div class="status">Status:</div>
+        <div class="count">0 captures</div>
         <div class="processing"></div>
-        <div class="hint">Ctrl+Enter to process</div>
+        <div class="hint"></div>
     </div>
 
     <script>
         const { ipcRenderer } = require('electron');
         
         ipcRenderer.on('capture-update', (event, data) => {
-            document.querySelector('.count').textContent = data.total;
+            document.querySelector('.count').textContent = data.total + ' captures';
             if (data.processing) {
                 document.querySelector('.processing').textContent = data.processing;
-                document.querySelector('.hint').style.display = 'none';
-            } else {
-                document.querySelector('.processing').textContent = 'Ready to process';
-                document.querySelector('.hint').style.display = 'block';
+            }
+            if (data.hint) {
+                document.querySelector('.hint').textContent = data.hint;
             }
         });
     </script>

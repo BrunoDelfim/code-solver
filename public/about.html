@@ -1,46 +1,55 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>About - Code Solver</title>
+    <title>About Code Solver</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
             padding: 20px;
             background-color: #f5f5f5;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
         .container {
             background-color: white;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 300px;
-            text-align: center;
         }
-        h2 {
-            color: #333;
-            margin-top: 0;
+        h1 {
+            color: #0066ff;
+            margin-bottom: 20px;
         }
         p {
             color: #666;
             line-height: 1.5;
         }
         .version {
-            font-size: 12px;
-            color: #999;
             margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #888;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Code Solver</h2>
-        <p>An application to help solve programming problems.</p>
-        <p>Developed to facilitate learning and practice of algorithms.</p>
-        <div class="version">Version 1.0.0</div>
+        <h1>About Code Solver</h1>
+        <p>Code Solver is an application that helps you solve programming problems by capturing text from your screen and using AI to generate solutions.</p>
+        <p>Features:</p>
+        <ul>
+            <li>Capture text from any part of your screen</li>
+            <li>Process multiple captures at once</li>
+            <li>Generate solutions with detailed explanations</li>
+            <li>Easy-to-use keyboard shortcuts</li>
+        </ul>
+        <div class="version">
+            Version: <span id="app-version"></span>
+        </div>
     </div>
+
+    <script>
+        const { CONSTANTS } = require('../src/config/constants');
+        document.getElementById('app-version').textContent = CONSTANTS.APP.VERSION;
+    </script>
 </body>
 </html> 

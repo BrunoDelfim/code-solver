@@ -1,9 +1,27 @@
 const fs = require('fs');
 const path = require('path');
 
-const configPath = path.join(process.env.APPDATA, 'Code Solver', 'config.json');
-if (fs.existsSync(configPath)) {
-    fs.unlinkSync(configPath);
+const appDataPath = path.join(process.env.APPDATA, 'Code Solver');
+
+if (fs.existsSync(appDataPath)) {
+    const files = fs.readdirSync(appDataPath);
+    
+    files.forEach(file => {
+        const filePath = path.join(appDataPath, file);
+        try {
+            fs.unlinkSync(filePath);
+            console.log(`Removed file: ${filePath}`);
+        } catch (error) {
+            console.error(`Error removing file ${filePath}:`, error);
+        }
+    });
+
+    try {
+        fs.rmdirSync(appDataPath);
+        console.log(`Removed directory: ${appDataPath}`);
+    } catch (error) {
+        console.error(`Error removing directory ${appDataPath}:`, error);
+    }
 }
 
 console.log('Pre-uninstallation completed successfully!'); 

@@ -89,7 +89,7 @@
             <div class="shortcut-description">Show/hide main window</div>
         </div>
         <div class="shortcut-row">
-            <div class="shortcut-key">Ctrl+Alt+P</div>
+            <div class="shortcut-key">Ctrl+Alt+P or Ctrl+Shift+P</div>
             <div class="shortcut-description">Capture part of the text (can use multiple times)</div>
         </div>
         <div class="shortcut-row">
@@ -102,7 +102,7 @@
         </div>
         <div class="shortcut-row">
             <div class="shortcut-key">Ctrl+Shift+Q</div>
-            <div class="shortcut-description">Close application</div>
+            <div class="shortcut-description">Quit application</div>
         </div>
     </div>
 
@@ -112,7 +112,10 @@
 
     <script>
         const { ipcRenderer } = require('electron');
+        const { CONSTANTS } = require('../src/config/constants');
         const statusDiv = document.getElementById('status');
+
+        document.title = `Code Solver v${CONSTANTS.APP.VERSION}`;
 
         function openApiKeyWindow() {
             ipcRenderer.send('open-api-window');
