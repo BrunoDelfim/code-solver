@@ -1,4 +1,7 @@
 const CONSTANTS = {
+  APP: {
+    VERSION: '1.0.1'
+  },
   WINDOW: {
     MAIN: {
       WIDTH: 800,

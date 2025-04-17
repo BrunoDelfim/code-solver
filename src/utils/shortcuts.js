@@ -14,19 +14,24 @@ let solutionWindow = null;
 
 async function handleCapture() {
   if (!isProcessing) {
-    if (solutionWindow) {
-      solutionWindow.close();
-      solutionWindow = null;
-    }
+    isProcessing = true;
     
-    processedResult = null;
-    hasStartedProcessing = false;
-    
-    isProcessing = false;
-    
-    const result = await captureAndProcess();
-    if (result) {
-      capturedText = result;
+    try {
+      if (solutionWindow) {
+        solutionWindow.hide();
+      }
+      processedResult = null;
+      hasStartedProcessing = false;
+      capturedText = null;
+      
+      const result = await captureAndProcess();
+      if (result) {
+        capturedText = result;
+      }
+    } catch (error) {
+      console.error('Error in capture process:', error);
+    } finally {
+      isProcessing = false;
     }
   }
 }
@@ -86,21 +91,31 @@ function registerShortcuts() {
         destroyCaptureStatus();
         clearCapturedTexts();
         
+        hasStartedProcessing = true;
+        isProcessing = true;
+
         if (!solutionWindow) {
           solutionWindow = createSolutionWindow();
           solutionWindow.on('closed', () => {
             solutionWindow = null;
           });
-        }
-
-        solutionWindow.webContents.once('did-finish-load', () => {
+          
+          solutionWindow.webContents.once('did-finish-load', () => {
+            solutionWindow.webContents.send('update-solution', {
+              solution: 'Processing...',
+              explanation: 'Please wait while we generate the solution.'
+            });
+            solutionWindow.show();
+          });
+          
+          solutionWindow.loadFile('public/solution.html');
+        } else {
+          solutionWindow.webContents.send('update-solution', {
+            solution: 'Processing...',
+            explanation: 'Please wait while we generate the solution.'
+          });
           solutionWindow.show();
-        });
-        
-        solutionWindow.loadFile('public/solution.html');
-
-        hasStartedProcessing = true;
-        isProcessing = true;
+        }
 
         const aiResult = await generateSolution(capturedText);
         if (aiResult) {

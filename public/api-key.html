@@ -70,6 +70,21 @@
             margin-top: 5px;
             display: none;
         }
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+            color: #666;
+        }
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s steps(5, end) infinite;
+        }
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
     </style>
 </head>
 <body>
@@ -77,8 +92,9 @@
         <h2>Configure Gemini API</h2>
         <div class="input-group">
             <label for="apiKey">Gemini API Key:</label>
-            <input type="text" id="apiKey" placeholder="Enter your API key here" required>
-            <div class="error-message" id="errorMessage">Please enter a valid API key.</div>
+            <input type="text" id="apiKey" placeholder="Enter your API key here">
+            <div class="error-message" id="errorMessage">Invalid API key. Please check and try again.</div>
+            <div class="loading" id="loading">Validating key</div>
             <div class="help-text">
                 Get your API key at: <a href="#" onclick="openApiKeyLink()">Google AI Studio</a>
             </div>
@@ -101,19 +117,47 @@
             const apiKey = document.getElementById('apiKey').value;
             const saveButton = document.getElementById('saveButton');
             const errorMessage = document.getElementById('errorMessage');
+            const loading = document.getElementById('loading');
             
             if (validateApiKey(apiKey)) {
                 saveButton.disabled = false;
                 errorMessage.style.display = 'none';
+                loading.style.display = 'none';
             } else {
                 saveButton.disabled = true;
-                errorMessage.style.display = 'block';
+                errorMessage.style.display = 'none';
+                loading.style.display = 'none';
             }
+        }
+
+        function showLoading() {
+            const loading = document.getElementById('loading');
+            const errorMessage = document.getElementById('errorMessage');
+            const saveButton = document.getElementById('saveButton');
+            
+            loading.style.display = 'block';
+            errorMessage.style.display = 'none';
+            saveButton.disabled = true;
+        }
+
+        function hideLoading() {
+            const loading = document.getElementById('loading');
+            loading.style.display = 'none';
+        }
+
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            const saveButton = document.getElementById('saveButton');
+            
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            saveButton.disabled = false;
         }
 
         function submitApiKey() {
             const apiKey = document.getElementById('apiKey').value.trim();
             if (validateApiKey(apiKey)) {
+                showLoading();
                 ipcRenderer.send('submit-api-key', apiKey);
             }
         }
@@ -127,7 +171,11 @@
             updateButtonState();
         });
 
-        // Inicializa o estado do botão
+        ipcRenderer.on('api-key-error', (event, message) => {
+            hideLoading();
+            showError(message);
+        });
+
         updateButtonState();
     </script>
 </body>

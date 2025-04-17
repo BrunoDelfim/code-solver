@@ -104,20 +104,17 @@
         let lastSolution = null;
 
         ipcRenderer.on('update-solution', (event, data) => {
-            console.log('Received solution:', data); // Debug log
+            console.log('Received solution:', data);
             lastSolution = data;
             if (typeof data === 'string') {
-                // Se receber apenas string, assume que é a solução
                 document.getElementById('solution').textContent = data;
                 document.getElementById('explanation').textContent = '';
             } else if (data && typeof data === 'object') {
-                // Se receber objeto, extrai solution e explanation
                 document.getElementById('solution').textContent = data.solution || 'No solution available';
                 document.getElementById('explanation').textContent = data.explanation || '';
             }
         });
 
-        // Debug: Mostra o último resultado recebido
         window.addEventListener('load', () => {
             if (lastSolution) {
                 console.log('Last solution:', lastSolution);

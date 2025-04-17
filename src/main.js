@@ -1,4 +1,6 @@
 const { app, globalShortcut } = require('electron');
+const path = require('path');
+const fs = require('fs');
 const gotTheLock = app.requestSingleInstanceLock();
 
 if (!gotTheLock) {
@@ -14,12 +16,25 @@ if (!gotTheLock) {
   });
 }
 
-require('electron-reload')(
-  [__dirname, require('path').join(__dirname, '..', 'public')],
-  {
-    electron: require(require('path').join(__dirname, '..', 'node_modules', 'electron'))
-  }
-);
+const userDataPath = path.join(process.env.APPDATA, 'Code Solver');
+if (!fs.existsSync(userDataPath)) {
+  console.log('Creating user data directory:', userDataPath);
+  fs.mkdirSync(userDataPath, { recursive: true });
+}
+
+if (process.env.NODE_ENV === 'development') {
+  require('electron-reload')(
+    [
+      path.join(__dirname, '..', 'public'),
+      path.join(__dirname, '..', 'src'),
+      path.join(__dirname, '..', 'package.json')
+    ],
+    {
+      electron: path.join(__dirname, '..', 'node_modules', '.bin', 'electron'),
+      hardResetMethod: 'exit'
+    }
+  );
+}
 
 const { createMainWindow } = require('./windows/mainWindow');
 const { registerShortcuts, unregisterShortcuts } = require('./utils/shortcuts');

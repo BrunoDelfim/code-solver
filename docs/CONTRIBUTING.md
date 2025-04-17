@@ -94,7 +94,7 @@ npm install
 
 4. Create a branch for your changes:
 ```bash
-git checkout -b feature/your-feature-name
+git checkout -b feature/card#0 (card number)
 ```
 
 5. Make your changes and test them

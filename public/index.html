@@ -102,7 +102,7 @@
         </div>
         <div class="shortcut-row">
             <div class="shortcut-key">Ctrl+Shift+Q</div>
-            <div class="shortcut-description">Close application</div>
+            <div class="shortcut-description">Quit application</div>
         </div>
     </div>
 
@@ -112,7 +112,10 @@
 
     <script>
         const { ipcRenderer } = require('electron');
+        const { CONSTANTS } = require('../src/config/constants');
         const statusDiv = document.getElementById('status');
+
+        document.title = `Code Solver v${CONSTANTS.APP.VERSION}`;
 
         function openApiKeyWindow() {
             ipcRenderer.send('open-api-window');

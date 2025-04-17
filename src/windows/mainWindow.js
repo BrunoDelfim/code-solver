@@ -7,7 +7,8 @@ let mainWindow = null;
 let tray = null;
 
 function createMainWindow() {
-  if (mainWindow) {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.focus();
     return mainWindow;
   }
 
@@ -40,6 +41,10 @@ function createMainWindow() {
   mainWindow.on('minimize', (event) => {
     event.preventDefault();
     mainWindow.hide();
+  });
+
+  mainWindow.on('closed', () => {
+    mainWindow = null;
   });
 
   return mainWindow;

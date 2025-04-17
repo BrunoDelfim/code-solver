@@ -2,6 +2,7 @@ const { BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const { PATHS } = require('../config/paths');
 const { CONSTANTS } = require('../config/constants');
+const { saveWindowPosition, getWindowPosition } = require('../services/windowPositionService');
 
 let solutionWindow = null;
 
@@ -10,11 +11,14 @@ function createSolutionWindow() {
     return solutionWindow;
   }
 
+  const savedPosition = getWindowPosition('solution');
+  const defaultPosition = { x: 10, y: 10 };
+
   solutionWindow = new BrowserWindow({
     width: CONSTANTS.WINDOW.SOLUTION.WIDTH,
     height: CONSTANTS.WINDOW.SOLUTION.HEIGHT,
-    x: 0,
-    y: 0,
+    x: savedPosition?.x || defaultPosition.x,
+    y: savedPosition?.y || defaultPosition.y,
     frame: false,
     transparent: true,
     alwaysOnTop: true,
@@ -35,12 +39,16 @@ function createSolutionWindow() {
   solutionWindow.setFocusable(false);
   solutionWindow.loadFile(path.join(PATHS.PUBLIC, 'solution.html'));
 
+  solutionWindow.on('moved', () => {
+    const position = solutionWindow.getPosition();
+    saveWindowPosition('solution', { x: position[0], y: position[1] });
+  });
+
   solutionWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
     console.error('Error loading solution window:', errorDescription);
   });
 
   solutionWindow.on('closed', () => {
-    console.log('Solution window closed');
     solutionWindow = null;
   });
 
@@ -57,16 +65,16 @@ function showSolutionWindow(result) {
   if (!solutionWindow || solutionWindow.isDestroyed()) {
     solutionWindow = createSolutionWindow();
     solutionWindow.webContents.once('did-finish-load', () => {
-      solutionWindow.webContents.send('solution-update', result);
-      if (!solutionWindow.isVisible()) {
-        solutionWindow.show();
+      if (result) {
+        solutionWindow.webContents.send('solution-update', result);
       }
+      solutionWindow.show();
     });
   } else {
-    solutionWindow.webContents.send('solution-update', result);
-    if (!solutionWindow.isVisible()) {
-      solutionWindow.show();
+    if (result) {
+      solutionWindow.webContents.send('solution-update', result);
     }
+    solutionWindow.show();
   }
 }
 
@@ -82,8 +90,7 @@ function toggleSolutionWindow(result) {
   } else if (solutionWindow.isVisible()) {
     hideSolutionWindow();
   } else {
-    solutionWindow.webContents.send('solution-update', result);
-    solutionWindow.show();
+    showSolutionWindow(result);
   }
 }
 
@@ -91,6 +98,5 @@ module.exports = {
   createSolutionWindow,
   showSolutionWindow,
   hideSolutionWindow,
-  toggleSolutionWindow,
-  getSolutionWindow: () => solutionWindow
+  toggleSolutionWindow
 };

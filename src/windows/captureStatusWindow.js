@@ -1,6 +1,7 @@
 const { BrowserWindow } = require('electron');
 const path = require('path');
 const { PATHS } = require('../config/paths');
+const { saveWindowPosition, getWindowPosition } = require('../services/windowPositionService');
 
 let captureStatusWindow = null;
 
@@ -9,9 +10,14 @@ function createCaptureStatusWindow() {
     return captureStatusWindow;
   }
 
+  const savedPosition = getWindowPosition('status');
+  const defaultPosition = { x: 10, y: 10 };
+
   captureStatusWindow = new BrowserWindow({
     width: 300,
     height: 150,
+    x: savedPosition?.x || defaultPosition.x,
+    y: savedPosition?.y || defaultPosition.y,
     frame: false,
     transparent: true,
     alwaysOnTop: true,
@@ -28,6 +34,11 @@ function createCaptureStatusWindow() {
   captureStatusWindow.setAlwaysOnTop(true, 'screen-saver');
   captureStatusWindow.setFocusable(false);
   captureStatusWindow.loadFile(path.join(PATHS.PUBLIC, 'capture-status.html'));
+
+  captureStatusWindow.on('moved', () => {
+    const position = captureStatusWindow.getPosition();
+    saveWindowPosition('status', { x: position[0], y: position[1] });
+  });
 
   captureStatusWindow.on('closed', () => {
     captureStatusWindow = null;

@@ -3,20 +3,34 @@ const { readApiKeyFromFile, saveApiKeyToFile } = require('./storageService');
 
 let geminiAI = null;
 
-function initializeGemini(apiKey) {
+async function initializeGemini(apiKey) {
   try {
     const cleanApiKey = apiKey.trim();
     if (!cleanApiKey) {
       throw new Error('API key is empty');
     }
-    
-    if (!saveApiKeyToFile(cleanApiKey)) {
-      throw new Error('Erro ao salvar chave API');
-    }
 
     console.log('Initializing Gemini with key:', cleanApiKey);
     geminiAI = new GoogleGenAI({ apiKey: cleanApiKey });
-    return true;
+
+    try {
+      await geminiAI.models.generateContent({
+        model: "gemini-2.0-flash",
+        contents: "Test"
+      });
+      
+      if (!saveApiKeyToFile(cleanApiKey)) {
+        throw new Error('Error saving API key');
+      }
+      
+      return true;
+    } catch (apiError) {
+      console.error('API validation error:', apiError);
+      if (apiError.message.includes('401') || apiError.message.includes('403')) {
+        throw new Error('Invalid API key');
+      }
+      throw apiError;
+    }
   } catch (error) {
     console.error('Error initializing Gemini:', error);
     return false;
@@ -27,9 +41,15 @@ async function generateSolution(text) {
   try {
     if (!geminiAI) {
       const apiKey = readApiKeyFromFile();
-      if (!apiKey || !initializeGemini(apiKey)) {
+      if (!apiKey) {
         return {
-          solution: "Error: Gemini API key not configured",
+          solution: "Error: API key not configured",
+          explanation: "Please configure a valid API key to generate solutions."
+        };
+      }
+      if (!await initializeGemini(apiKey)) {
+        return {
+          solution: "Error: Invalid API key",
           explanation: "Please configure a valid API key to generate solutions."
         };
       }
