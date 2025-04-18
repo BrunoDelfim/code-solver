@@ -70,12 +70,35 @@ If you have a suggestion for the project, we'd love to hear about it! Enhancemen
 
 ```
 code-solver/
-├── src/                    # Source code
-│   ├── main.js            # Main Electron file
-│   └── scripts/           # Helper scripts
-├── public/                # Public assets
-├── assets/                # Static assets
-└── docs/                  # Documentation
+├── src/                    # Main source code
+│   ├── config/            # App configurations
+│   ├── services/          # App services
+│   ├── utils/             # Utilities
+│   ├── windows/           # Window management
+│   ├── scripts/           # Auxiliary scripts
+│   └── main.js            # Entry point
+│
+├── public/                # Public files
+│   ├── index.html        # Main HTML
+│   ├── about.html        # About HTML
+│   ├── api-key.html      # API key configuration
+│   ├── solution.html     # Solution display
+│   └── capture-status.html # Capture status
+│
+├── assets/               # Static resources
+│   └── icon.ico         # Application icon
+│
+├── docs/                # Documentation
+├── dist/               # Builds and distribution
+├── .github/            # GitHub configurations
+├── node_modules/       # Dependencies
+├── package.json        # Project configuration
+├── package-lock.json   # Dependency lock file
+├── .gitignore         # Git ignore rules
+├── eng.traineddata    # English OCR data
+├── por.traineddata    # Portuguese OCR data
+├── README.md          # Main documentation
+└── LICENSE            # License
 ```
 
 ## Development Setup
@@ -94,7 +117,7 @@ npm install
 
 4. Create a branch for your changes:
 ```bash
-git checkout -b feature/card#0 (card number)
+git checkout -b feature/AmazingFeature
 ```
 
 5. Make your changes and test them

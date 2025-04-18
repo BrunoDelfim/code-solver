@@ -25,6 +25,6 @@ body:
     id: version
     attributes:
       label: Code Solver Version
-      placeholder: E.g., 1.1.0
+      placeholder: E.g., 1.0.1
     validations:
       required: true
