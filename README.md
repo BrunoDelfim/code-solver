@@ -118,7 +118,6 @@ code-solve/
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. If there is a related issue, please reference it (Closes#)
 6. Open a Pull Request
-**(Note: it is mandatory that there is an issue before opening the PR, otherwise they will not be accepted.)**
 
 ## 📝 License
 

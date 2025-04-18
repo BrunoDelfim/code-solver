@@ -6,7 +6,6 @@
 ## 🔗 Related Issues
 - If there is a related issue, please reference it:
 - Closes #
-**(Note: it is mandatory that there is an issue before opening the PR, otherwise they will not be accepted.)**
 
 ## ✅ Checklist
 - [ ] I have tested it locally and it is working as expected

@@ -11,6 +11,7 @@ if (!gotTheLock) {
     const mainWindow = require('./windows/mainWindow').getMainWindow();
     if (mainWindow) {
       if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.show();
       mainWindow.focus();
     }
   });
