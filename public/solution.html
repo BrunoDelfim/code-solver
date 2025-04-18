@@ -64,6 +64,17 @@
         .content::-webkit-scrollbar-thumb:hover {
             background: rgba(255, 255, 255, 0.4);
         }
+        .section {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #4CAF50;
+        }
         .code {
             background-color: rgba(255, 255, 255, 0.1);
             padding: 10px;
@@ -74,9 +85,6 @@
             word-wrap: break-word;
         }
         .explanation {
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
             white-space: pre-wrap;
             word-wrap: break-word;
         }
@@ -89,8 +97,35 @@
             <button class="close-btn" onclick="hideSolution()">✕</button>
         </div>
         <div class="content">
-            <div id="solution" class="code">Waiting for solution...</div>
-            <div id="explanation" class="explanation">Waiting for explanation...</div>
+            <div class="section">
+                <div class="section-title">Title</div>
+                <div id="title" class="explanation">Loading...</div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Language</div>
+                <div id="language" class="explanation">Loading...</div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Problem Description</div>
+                <div id="problem" class="explanation">Loading...</div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Solution</div>
+                <div id="code" class="code">Loading...</div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Explanation</div>
+                <div id="explanation" class="explanation">Loading...</div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Testing Instructions</div>
+                <div id="testing" class="explanation">Loading...</div>
+            </div>
         </div>
     </div>
 
@@ -102,16 +137,75 @@
         }
 
         let lastSolution = null;
+        let isProcessing = true;
 
         ipcRenderer.on('update-solution', (event, data) => {
-            console.log('Received solution:', data);
-            lastSolution = data;
-            if (typeof data === 'string') {
-                document.getElementById('solution').textContent = data;
-                document.getElementById('explanation').textContent = '';
-            } else if (data && typeof data === 'object') {
-                document.getElementById('solution').textContent = data.solution || 'No solution available';
-                document.getElementById('explanation').textContent = data.explanation || '';
+            console.log('Received solution data:', data);
+            console.log('Data type:', typeof data);
+            console.log('Is data an object?', typeof data === 'object');
+            console.log('Data details:', data?.details);
+            
+            if (data && typeof data === 'object') {
+                const details = data.details || data;
+                console.log('Processing details:', details);
+                const titleElement = document.getElementById('title');
+                const languageElement = document.getElementById('language');
+                const problemElement = document.getElementById('problem');
+                const codeElement = document.getElementById('code');
+                const explanationElement = document.getElementById('explanation');
+                const testingElement = document.getElementById('testing');
+                
+                if (titleElement && details.title) {
+                    titleElement.textContent = details.title;
+                    console.log('Title updated:', details.title);
+                }
+                
+                if (languageElement && details.language) {
+                    languageElement.textContent = details.language;
+                    console.log('Language updated:', details.language);
+                }
+                
+                if (problemElement && details.problem) {
+                    problemElement.textContent = details.problem;
+                    console.log('Problem updated:', details.problem);
+                }
+                
+                if (codeElement && details.code) {
+                    codeElement.textContent = details.code;
+                    console.log('Code updated:', details.code);
+                }
+                
+                if (explanationElement && details.explanation) {
+                    explanationElement.textContent = details.explanation;
+                    console.log('Explanation updated:', details.explanation);
+                }
+                
+                if (testingElement && details.testing) {
+                    testingElement.textContent = details.testing;
+                    console.log('Testing updated:', details.testing);
+                }
+                
+                const allFields = ['title', 'language', 'problem', 'code', 'explanation', 'testing'];
+                const hasAllFields = allFields.every(field => details[field]);
+                
+                if (hasAllFields) {
+                    isProcessing = false;
+                    if (!details.title) titleElement.textContent = 'No title available';
+                    if (!details.language) languageElement.textContent = 'No language specified';
+                    if (!details.problem) problemElement.textContent = 'No problem description available';
+                    if (!details.code) codeElement.textContent = 'No code available';
+                    if (!details.explanation) explanationElement.textContent = 'No explanation available';
+                    if (!details.testing) testingElement.textContent = 'No testing instructions available';
+                }
+            } else {
+                console.error('Invalid data format received:', data);
+                const elements = ['title', 'language', 'problem', 'code', 'explanation', 'testing'];
+                elements.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.textContent = 'Error loading data';
+                    }
+                });
             }
         });
 
