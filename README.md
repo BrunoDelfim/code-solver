@@ -16,12 +16,11 @@ The software is designed to help developers during live coding sessions, as scre
 
 ## ⚡ Shortcuts
 
-- `Ctrl + Shift + P`: Capture screen  
-- `Alt + S`: Show/hide solution  
 - `Alt + P`: Show/hide main window  
-- `Ctrl + Shift + Q`: Exit application  
-- `Alt + Ctrl + P`: Alternative screen capture  
+- `Ctrl + Shift + P` or `Crtl + Alt + P`: Capture screen  
 - `Ctrl + Enter`: Process captures
+- `Alt + S`: Show/hide solution  
+- `Ctrl + Shift + Q`: Exit application  
 
 ## 🛠️ Technologies
 
@@ -67,24 +66,36 @@ npm run build
 ## 📁 Project Structure
 
 ```
-code-solver/
+code-solve/
 ├── src/                    # Main source code
-│   ├── main.js            # Main Electron file
-│   └── scripts/           # Auxiliary scripts
-│       ├── capture.js     # Screen capture script
-│       ├── ocr.js         # OCR script
-│       └── gemini.js      # Gemini integration script
+│   ├── config/            # App configurations
+│   ├── services/          # App services
+│   ├── utils/             # Utilities
+│   ├── windows/           # Window management
+│   ├── scripts/           # Auxiliary scripts
+│   └── main.js            # Entry point
 │
-├── public/                # Public files/interface
-│   ├── index.html         # Main page
-│   ├── about.html         # About page
-│   └── api-key.html       # API key configuration page
+├── public/                # Public files
+│   ├── index.html        # Main HTML
+│   ├── about.html        # About HTML
+│   ├── api-key.html      # API key configuration
+│   ├── solution.html     # Solution display
+│   └── capture-status.html # Capture status
 │
-├── assets/                # Static resources
-│   └── icon.ico           # Application icon
+├── assets/               # Static resources
+│   └── icon.ico         # Application icon
 │
-├── package.json           # Project configuration
-└── generateInstaller.bat  # Installer generation script
+├── docs/                # Documentation
+├── dist/               # Builds and distribution
+├── .github/            # GitHub configurations
+├── node_modules/       # Dependencies
+├── package.json        # Project configuration
+├── package-lock.json   # Dependency lock file
+├── .gitignore         # Git ignore rules
+├── eng.traineddata    # English OCR data
+├── por.traineddata    # Portuguese OCR data
+├── README.md          # Main documentation
+└── LICENSE            # License
 ```
 
 ## ⚙️ Configuration
@@ -105,7 +116,9 @@ code-solver/
 2. Create a branch for your feature (`git checkout -b feature/AmazingFeature`)
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+5. If there is a related issue, please reference it (Closes#)
+6. Open a Pull Request
+**(Note: it is mandatory that there is an issue before opening the PR, otherwise they will not be accepted.)**
 
 ## 📝 License
 
