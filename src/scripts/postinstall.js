@@ -14,4 +14,4 @@ if (!fs.existsSync(configPath)) {
     }, null, 2));
 }
 
-console.log('Post-installation completed successfully!'); 
+console.log('Post-installation completed successfully'); 

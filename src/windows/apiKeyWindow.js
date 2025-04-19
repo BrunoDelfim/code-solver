@@ -84,13 +84,19 @@ function requestApiKey() {
 }
 
 function createApiKeyWindow() {
+  console.log('Creating API key window...');
+  
   if (apiKeyWindow && !apiKeyWindow.isDestroyed()) {
+    console.log('API key window already exists, focusing...');
     apiKeyWindow.focus();
     return apiKeyWindow;
   }
 
   const savedKey = readApiKeyFromFile();
-  apiKeyWindow = new BrowserWindow({
+  const mainWindow = require('./mainWindow').getMainWindow();
+  console.log('Main window status:', mainWindow ? 'Exists' : 'Not found');
+  
+  const windowOptions = {
     width: CONSTANTS.WINDOW.API_KEY.WIDTH,
     height: CONSTANTS.WINDOW.API_KEY.HEIGHT,
     resizable: false,
@@ -98,28 +104,40 @@ function createApiKeyWindow() {
     maximizable: false,
     skipTaskbar: true,
     autoHideMenuBar: true,
-    menuBarVisible: false,
     show: false,
+    alwaysOnTop: true,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
     },
     icon: path.join(PATHS.ASSETS, 'icon.ico')
-  });
+  };
+
+  try {
+    apiKeyWindow = new BrowserWindow(windowOptions);
+    console.log('API key window created successfully');
+  } catch (error) {
+    console.error('Error creating API key window:', error);
+    return null;
+  }
 
   apiKeyWindow.setContentProtection(true);
-
+  apiKeyWindow.setVisibleOnAllWorkspaces(true);
+  apiKeyWindow.setAlwaysOnTop(true, 'screen-saver');
   apiKeyWindow.loadFile(path.join(PATHS.PUBLIC, 'api-key.html'));
   apiKeyWindow.setMenu(null);
-  
+
   if (savedKey) {
     apiKeyWindow.webContents.once('did-finish-load', () => {
+      console.log('Loading saved API key...');
       apiKeyWindow.webContents.send('load-saved-key', savedKey);
     });
   }
-  
+
   apiKeyWindow.once('ready-to-show', () => {
+    console.log('API key window ready to show...');
     apiKeyWindow.show();
+    apiKeyWindow.focus();
   });
 
   removeApiKeyListeners();
@@ -138,6 +156,7 @@ function createApiKeyWindow() {
   ipcMain.on('submit-api-key', submitHandler);
 
   apiKeyWindow.on('closed', () => {
+    console.log('API key window closed');
     ipcMain.removeListener('submit-api-key', submitHandler);
     apiKeyWindow = null;
   });

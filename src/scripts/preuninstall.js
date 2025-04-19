@@ -10,7 +10,7 @@ if (fs.existsSync(appDataPath)) {
         const filePath = path.join(appDataPath, file);
         try {
             fs.unlinkSync(filePath);
-            console.log(`Removed file: ${filePath}`);
+            console.log(`File removed: ${filePath}`);
         } catch (error) {
             console.error(`Error removing file ${filePath}:`, error);
         }
@@ -18,10 +18,10 @@ if (fs.existsSync(appDataPath)) {
 
     try {
         fs.rmdirSync(appDataPath);
-        console.log(`Removed directory: ${appDataPath}`);
+        console.log(`Directory removed: ${appDataPath}`);
     } catch (error) {
         console.error(`Error removing directory ${appDataPath}:`, error);
     }
 }
 
-console.log('Pre-uninstallation completed successfully!'); 
+console.log('Pre-uninstallation completed successfully'); 

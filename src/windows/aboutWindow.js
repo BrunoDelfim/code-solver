@@ -19,6 +19,7 @@ function createAboutWindow() {
     maximizable: false,
     autoHideMenuBar: true,
     menuBarVisible: false,
+    skipTaskbar: true,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false

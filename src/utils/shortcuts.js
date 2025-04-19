@@ -4,6 +4,8 @@ const { captureAndProcess, clearCapturedTexts } = require('../services/ocrServic
 const { destroyCaptureStatus } = require('../windows/captureStatusWindow');
 const { createSolutionWindow } = require('../windows/solutionWindow');
 const { generateSolution } = require('../services/geminiService');
+const { loadApiKey } = require('../services/apiKeyService');
+const { createApiKeyWindow } = require('../windows/apiKeyWindow');
 
 let isRunning = true;
 let isProcessing = false;
@@ -17,6 +19,24 @@ async function handleCapture() {
     isProcessing = true;
     
     try {
+      console.log('Starting capture process...');
+      const apiKey = await loadApiKey();
+      console.log('API key check result:', apiKey ? 'Found' : 'Not found');
+      
+      if (!apiKey) {
+        console.log('No API key found, opening API key window...');
+        const apiKeyWindow = createApiKeyWindow();
+        console.log('API key window created:', apiKeyWindow ? 'Success' : 'Failed');
+        
+        if (apiKeyWindow) {
+          console.log('Showing API key window...');
+          apiKeyWindow.show();
+          apiKeyWindow.focus();
+        }
+        isProcessing = false;
+        return;
+      }
+
       if (solutionWindow) {
         solutionWindow.hide();
       }
@@ -88,6 +108,13 @@ function registerShortcuts() {
   globalShortcut.register('CommandOrControl+Enter', async () => {
     if (capturedText && !isProcessing) {
       try {
+        const apiKey = await loadApiKey();
+        if (!apiKey) {
+          const apiKeyWindow = createApiKeyWindow();
+          apiKeyWindow.show();
+          return;
+        }
+
         destroyCaptureStatus();
         clearCapturedTexts();
         
@@ -100,10 +127,16 @@ function registerShortcuts() {
             solutionWindow = null;
           });
           
-          solutionWindow.webContents.once('did-finish-load', () => {
+          solutionWindow.webContents.on('did-finish-load', () => {
             solutionWindow.webContents.send('update-solution', {
-              solution: 'Processing...',
-              explanation: 'Please wait while we generate the solution.'
+              details: {
+                title: 'Waiting for title...',
+                language: 'Waiting for language...',
+                problem: 'Waiting for problem...',
+                code: 'Waiting for code...',
+                explanation: 'Waiting for explanation...',
+                testing: 'Waiting for testing...'
+              }
             });
             solutionWindow.show();
           });
@@ -111,42 +144,34 @@ function registerShortcuts() {
           solutionWindow.loadFile('public/solution.html');
         } else {
           solutionWindow.webContents.send('update-solution', {
-            solution: 'Processing...',
-            explanation: 'Please wait while we generate the solution.'
+            details: {
+              title: 'Waiting for title...',
+              language: 'Waiting for language...',
+              problem: 'Waiting for problem...',
+              code: 'Waiting for code...',
+              explanation: 'Waiting for explanation...',
+              testing: 'Waiting for testing...'
+            }
           });
           solutionWindow.show();
         }
 
         const aiResult = await generateSolution(capturedText);
         if (aiResult) {
-          processedResult = {
-            solution: aiResult.solution || 'No solution available',
-            explanation: aiResult.explanation || 'No explanation available'
-          };
-          
-          if (!solutionWindow) {
-            solutionWindow = createSolutionWindow();
-            solutionWindow.on('closed', () => {
-              solutionWindow = null;
-            });
-            
-            solutionWindow.webContents.once('did-finish-load', () => {
-              solutionWindow.webContents.send('update-solution', processedResult);
-              solutionWindow.show();
-            });
-            
-            solutionWindow.loadFile('public/solution.html');
-          } else {
-            solutionWindow.webContents.send('update-solution', processedResult);
-            solutionWindow.show();
-          }
+          processedResult = aiResult;
         }
       } catch (error) {
         console.error('Error processing with AI:', error);
         if (solutionWindow) {
           solutionWindow.webContents.send('update-solution', {
-            solution: 'Error processing with AI',
-            explanation: error.message
+            details: {
+              title: 'Error obtaining titles',
+              language: 'Error obtaining language',
+              problem: 'Error obtaining problem',
+              code: 'Error obtaining code',
+              explanation: 'Error obtaining explanation',
+              testing: 'Error obtaining testing'
+            }
           });
           solutionWindow.show();
         }
