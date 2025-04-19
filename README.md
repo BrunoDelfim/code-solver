@@ -40,7 +40,7 @@ The software is designed to help developers during live coding sessions, as scre
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/your-username/code-solver.git
+git clone https://github.com/BrunoDelfim/code-solver.git
 cd code-solver
 ```
 
