@@ -1,24 +1,34 @@
 {
     "name": "code-solver",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Application to solve code challenges",
-    "main": "src/main.js",
+    "main": "dist/main.js",
     "scripts": {
         "start": "electron .",
-        "dev": "cross-env NODE_ENV=development electron .",
-        "build": "electron-builder --win --x64",
-        "postinstall": "electron-builder install-app-deps"
+        "dev": "cross-env NODE_ENV=development nodemon --watch src --watch public --exec \"tsc && electron .\"",
+        "clean": "rimraf dist || true && mkdir dist || true",
+        "build": "npm run clean && tsc && electron-builder --win --x64 --config.directories.output=dist",
+        "postinstall": "tsc && node dist/scripts/postinstall.ts",
+        "preuninstall": "tsc && node dist/scripts/preuninstall.ts"
     },
-    "author": "bdelfim",
+    "author": "BrunoDelfim",
     "license": "ISC",
     "devDependencies": {
-        "electron": "^28.1.0",
+        "@types/electron": "^1.6.10",
+        "@types/node": "^20.11.24",
+        "cross-env": "^7.0.3",
+        "electron": "^28.2.3",
         "electron-builder": "^24.9.1",
         "electron-reload": "^2.0.0-alpha.1",
-        "cross-env": "^7.0.3"
+        "nodemon": "^3.1.0",
+        "rimraf": "^5.0.5",
+        "typescript": "^5.3.3"
     },
     "dependencies": {
         "@google/genai": "^0.2.0",
+        "electron-store": "^8.1.0",
+        "node-tesseract-ocr": "^2.0.2",
+        "screenshot-desktop": "^1.12.7",
         "tesseract.js": "^5.0.4"
     },
     "build": {
@@ -28,18 +38,11 @@
             "output": "dist"
         },
         "win": {
-            "target": [
-                {
-                    "target": "nsis",
-                    "arch": [
-                        "x64"
-                    ]
-                }
-            ],
+            "target": "nsis",
             "icon": "assets/icon.ico"
         },
         "files": [
-            "src/**/*",
+            "dist/**/*",
             "public/**/*",
             "assets/**/*",
             "package.json"

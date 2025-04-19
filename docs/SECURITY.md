@@ -6,7 +6,7 @@ Currently, only the following version receives security updates:
 
 | Version | Supported     |
 | ------- | ------------- |
-| 1.1.0   | ✅ Supported   |
+| 1.0.2   | ✅ Supported   |
 
 ## 🐛 Reporting Vulnerabilities
 

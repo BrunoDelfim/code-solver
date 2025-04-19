@@ -1,18 +1,18 @@
-const { globalShortcut, app } = require('electron');
-const { getMainWindow } = require('../windows/mainWindow');
-const { captureAndProcess, clearCapturedTexts } = require('../services/ocrService');
-const { destroyCaptureStatus } = require('../windows/captureStatusWindow');
-const { createSolutionWindow } = require('../windows/solutionWindow');
-const { generateSolution } = require('../services/geminiService');
-const { loadApiKey } = require('../services/apiKeyService');
-const { createApiKeyWindow } = require('../windows/apiKeyWindow');
+import { globalShortcut, app, BrowserWindow } from 'electron';
+import { getMainWindow } from '../windows/mainWindow';
+import { captureAndProcess, clearCapturedTexts } from '../services/ocrService';
+import { destroyCaptureStatus } from '../windows/captureStatusWindow';
+import { createSolutionWindow } from '../windows/solutionWindow';
+import { generateSolution } from '../services/geminiService';
+import { loadApiKey } from '../services/apiKeyService';
+import { createApiKeyWindow } from '../windows/apiKeyWindow';
 
 let isRunning = true;
 let isProcessing = false;
 let hasStartedProcessing = false;
-let capturedText = null;
-let processedResult = null;
-let solutionWindow = null;
+let capturedText: string | null = null;
+let processedResult: any = null;
+let solutionWindow: BrowserWindow | null = null;
 
 async function handleCapture() {
   if (!isProcessing) {
@@ -56,7 +56,7 @@ async function handleCapture() {
   }
 }
 
-function registerShortcuts() {
+export function registerShortcuts(): void {
   globalShortcut.unregisterAll();
 
   globalShortcut.register('CommandOrControl+Shift+P', handleCapture);
@@ -68,16 +68,19 @@ function registerShortcuts() {
     }
 
     if (!solutionWindow) {
-      solutionWindow = createSolutionWindow();
+      const newWindow = createSolutionWindow();
+      if (!newWindow) return;
+      
+      solutionWindow = newWindow;
       solutionWindow.on('closed', () => {
         solutionWindow = null;
       });
       
       solutionWindow.webContents.once('did-finish-load', () => {
         if (processedResult) {
-          solutionWindow.webContents.send('update-solution', processedResult);
+          solutionWindow?.webContents.send('update-solution', processedResult);
         }
-        solutionWindow.show();
+        solutionWindow?.show();
       });
       
       solutionWindow.loadFile('public/solution.html');
@@ -111,7 +114,7 @@ function registerShortcuts() {
         const apiKey = await loadApiKey();
         if (!apiKey) {
           const apiKeyWindow = createApiKeyWindow();
-          apiKeyWindow.show();
+          apiKeyWindow?.show();
           return;
         }
 
@@ -122,13 +125,16 @@ function registerShortcuts() {
         isProcessing = true;
 
         if (!solutionWindow) {
-          solutionWindow = createSolutionWindow();
+          const newWindow = createSolutionWindow();
+          if (!newWindow) return;
+          
+          solutionWindow = newWindow;
           solutionWindow.on('closed', () => {
             solutionWindow = null;
           });
           
           solutionWindow.webContents.on('did-finish-load', () => {
-            solutionWindow.webContents.send('update-solution', {
+            solutionWindow?.webContents.send('update-solution', {
               details: {
                 title: 'Waiting for title...',
                 language: 'Waiting for language...',
@@ -138,7 +144,7 @@ function registerShortcuts() {
                 testing: 'Waiting for testing...'
               }
             });
-            solutionWindow.show();
+            solutionWindow?.show();
           });
           
           solutionWindow.loadFile('public/solution.html');
@@ -187,14 +193,18 @@ function registerShortcuts() {
   });
 }
 
-function unregisterShortcuts() {
+export function unregisterShortcuts(): void {
   globalShortcut.unregisterAll();
 }
 
-module.exports = {
-  registerShortcuts,
-  unregisterShortcuts,
-  setIsProcessing: (value) => { isProcessing = value; },
-  setLastResult: (value) => { capturedText = value; },
-  getIsRunning: () => isRunning
-};
+export function setIsProcessing(value: boolean): void {
+  isProcessing = value;
+}
+
+export function setLastResult(value: string | null): void {
+  capturedText = value;
+}
+
+export function getIsRunning(): boolean {
+  return isRunning;
+} 

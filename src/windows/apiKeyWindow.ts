@@ -1,17 +1,18 @@
-const { BrowserWindow, ipcMain } = require('electron');
-const path = require('path');
-const { PATHS } = require('../config/paths');
-const { CONSTANTS } = require('../config/constants');
-const { readApiKeyFromFile, saveApiKeyToFile } = require('../services/storageService');
-const { initializeGemini } = require('../services/geminiService');
+import { BrowserWindow, ipcMain, screen } from 'electron';
+import path from 'path';
+import { PATHS } from '../config/paths';
+import { CONSTANTS } from '../config/constants';
+import { readApiKeyFromFile, saveApiKeyToFile } from '../services/storageService';
+import { initializeGemini } from '../services/geminiService';
+import { getMainWindow } from './mainWindow';
 
-let apiKeyWindow = null;
+let apiKeyWindow: BrowserWindow | null = null;
 
-function removeApiKeyListeners() {
+function removeApiKeyListeners(): void {
   ipcMain.removeAllListeners('submit-api-key');
 }
 
-async function validateAndSaveApiKey(apiKey) {
+async function validateAndSaveApiKey(apiKey: string): Promise<boolean> {
   try {
     const isValid = await initializeGemini(apiKey);
     if (isValid) {
@@ -25,7 +26,7 @@ async function validateAndSaveApiKey(apiKey) {
   }
 }
 
-function requestApiKey() {
+export function requestApiKey(): Promise<string | null> {
   const savedKey = readApiKeyFromFile();
   
   return new Promise((resolve) => {
@@ -52,7 +53,7 @@ function requestApiKey() {
 
     if (savedKey) {
       apiKeyWindow.webContents.once('did-finish-load', () => {
-        apiKeyWindow.webContents.send('load-saved-key', savedKey);
+        apiKeyWindow?.webContents.send('load-saved-key', savedKey);
       });
     }
 
@@ -61,11 +62,11 @@ function requestApiKey() {
 
     removeApiKeyListeners();
 
-    const submitHandler = async (event, apiKey) => {
+    const submitHandler = async (event: Electron.IpcMainEvent, apiKey: string) => {
       if (apiKey) {
         const isValid = await validateAndSaveApiKey(apiKey);
         if (isValid) {
-          apiKeyWindow.close();
+          apiKeyWindow?.close();
           resolve(apiKey);
         } else {
           event.reply('api-key-error', 'Invalid API key. Please check and try again.');
@@ -83,7 +84,7 @@ function requestApiKey() {
   });
 }
 
-function createApiKeyWindow() {
+export function createApiKeyWindow(): BrowserWindow | null {
   console.log('Creating API key window...');
   
   if (apiKeyWindow && !apiKeyWindow.isDestroyed()) {
@@ -93,7 +94,7 @@ function createApiKeyWindow() {
   }
 
   const savedKey = readApiKeyFromFile();
-  const mainWindow = require('./mainWindow').getMainWindow();
+  const mainWindow = getMainWindow();
   console.log('Main window status:', mainWindow ? 'Exists' : 'Not found');
   
   const windowOptions = {
@@ -130,23 +131,23 @@ function createApiKeyWindow() {
   if (savedKey) {
     apiKeyWindow.webContents.once('did-finish-load', () => {
       console.log('Loading saved API key...');
-      apiKeyWindow.webContents.send('load-saved-key', savedKey);
+      apiKeyWindow?.webContents.send('load-saved-key', savedKey);
     });
   }
 
   apiKeyWindow.once('ready-to-show', () => {
     console.log('API key window ready to show...');
-    apiKeyWindow.show();
-    apiKeyWindow.focus();
+    apiKeyWindow?.show();
+    apiKeyWindow?.focus();
   });
 
   removeApiKeyListeners();
 
-  const submitHandler = async (event, apiKey) => {
+  const submitHandler = async (event: Electron.IpcMainEvent, apiKey: string) => {
     if (apiKey) {
       const isValid = await validateAndSaveApiKey(apiKey);
       if (isValid) {
-        apiKeyWindow.close();
+        apiKeyWindow?.close();
       } else {
         event.reply('api-key-error', 'Invalid API key. Please check and try again.');
       }
@@ -162,9 +163,4 @@ function createApiKeyWindow() {
   });
 
   return apiKeyWindow;
-}
-
-module.exports = {
-  createApiKeyWindow,
-  requestApiKey
-};
+} 

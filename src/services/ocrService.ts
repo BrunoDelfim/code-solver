@@ -1,11 +1,17 @@
-const { createWorker } = require('tesseract.js');
-const { desktopCapturer } = require('electron');
-const { showCaptureStatus, updateCaptureStatus, hideCaptureStatus } = require('../windows/captureStatusWindow');
+import { createWorker } from 'tesseract.js';
+import { desktopCapturer } from 'electron';
+import { showCaptureStatus, updateCaptureStatus, hideCaptureStatus } from '../windows/captureStatusWindow';
+
+interface CaptureStatus {
+  total: number;
+  processing: string;
+  hint: string;
+}
 
 let isProcessing = false;
-let capturedTexts = [];
+let capturedTexts: string[] = [];
 
-async function captureAndProcess() {
+export async function captureAndProcess(): Promise<string | null> {
   if (isProcessing) return null;
   
   try {
@@ -49,7 +55,6 @@ async function captureAndProcess() {
     });
 
     return text;
-
   } catch (error) {
     console.error('Error in OCR process:', error);
     updateCaptureStatus({
@@ -63,11 +68,11 @@ async function captureAndProcess() {
   }
 }
 
-function getCapturedTexts() {
+export function getCapturedTexts(): string[] {
   return capturedTexts;
 }
 
-function clearCapturedTexts() {
+export function clearCapturedTexts(): void {
   capturedTexts = [];
   updateCaptureStatus({
     total: 0,
@@ -76,18 +81,35 @@ function clearCapturedTexts() {
   });
 }
 
-function getIsProcessing() {
+export function getIsProcessing(): boolean {
   return isProcessing;
 }
 
-function resetCaptures() {
+export function resetCaptures(): void {
   capturedTexts = [];
 }
 
-module.exports = {
-  captureAndProcess,
-  getCapturedTexts,
-  clearCapturedTexts,
-  getIsProcessing,
-  resetCaptures
-};
+export async function processTexts(): Promise<string | null> {
+  if (capturedTexts.length === 0) return null;
+  
+  try {
+    isProcessing = true;
+    updateCaptureStatus({
+      total: capturedTexts.length,
+      processing: 'Processing...',
+      hint: 'Please wait'
+    });
+
+    const combinedText = capturedTexts.join('\n\n');
+    clearCapturedTexts();
+    hideCaptureStatus();
+    
+    return combinedText;
+  } catch (error) {
+    console.error('Error in processTexts:', error);
+    hideCaptureStatus();
+    return null;
+  } finally {
+    isProcessing = false;
+  }
+} 

@@ -13,6 +13,7 @@ The software is designed to help developers during live coding sessions, as scre
 - ⌨️ Global shortcuts for all functions
 - 🔒 Content protection on windows
 - 🎯 Support for multiple captures
+- 📝 TypeScript support for better code quality
 
 ## ⚡ Shortcuts
 
@@ -24,12 +25,36 @@ The software is designed to help developers during live coding sessions, as scre
 
 ## 🛠️ Technologies
 
-- Electron  
-- Node.js  
-- Tesseract.js (OCR)  
-- Google Gemini API  
+- Electron ^28.2.3
+- Node.js
+- TypeScript ^5.3.3
+- Tesseract.js ^5.0.4 (OCR)
+- Google Gemini API ^0.2.0
 - HTML/CSS/JavaScript
-- cross-env (Environment variables management)
+- cross-env ^7.0.3 (Environment variables management)
+- electron-store ^8.1.0
+- node-tesseract-ocr ^2.0.2
+- screenshot-desktop ^1.12.7
+
+## 📦 Dependencies
+
+### Main Dependencies
+- Electron ^28.2.3
+- TypeScript ^5.3.3
+- @google/genai ^0.2.0
+- electron-store ^8.1.0
+- node-tesseract-ocr ^2.0.2
+- screenshot-desktop ^1.12.7
+- tesseract.js ^5.0.4
+
+### Development Dependencies
+- @types/electron ^1.6.10
+- @types/node ^20.11.24
+- cross-env ^7.0.3
+- electron-builder ^24.9.1
+- electron-reload ^2.0.0-alpha.1
+- nodemon ^3.1.0
+- rimraf ^5.0.5
 
 ## 📋 Requirements
 
@@ -59,6 +84,8 @@ npm start
 1. Run the command on terminal:
 ```bash
 npm run build
+# or
+yarn build
 ```
 
 2. The installer will be generated in the `dist` folder
@@ -72,8 +99,8 @@ code-solve/
 │   ├── services/          # App services
 │   ├── utils/             # Utilities
 │   ├── windows/           # Window management
-│   ├── scripts/           # Auxiliary scripts
-│   └── main.js            # Entry point
+│   ├── renderers/         # Renderer processes
+│   └── main.ts            # Entry point
 │
 ├── public/                # Public files
 │   ├── index.html        # Main HTML
@@ -92,6 +119,7 @@ code-solve/
 ├── package.json        # Project configuration
 ├── package-lock.json   # Dependency lock file
 ├── .gitignore         # Git ignore rules
+├── tsconfig.json      # TypeScript configuration
 ├── eng.traineddata    # English OCR data
 ├── por.traineddata    # Portuguese OCR data
 ├── README.md          # Main documentation
@@ -129,3 +157,4 @@ This project is under the ISC license. See the `LICENSE` file for more details.
 - Tesseract.js for the OCR technology
 - Electron for the framework
 - cross-env (Environment variables management)
+- TypeScript team for the amazing type system

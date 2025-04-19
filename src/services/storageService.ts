@@ -1,8 +1,8 @@
-const fs = require('fs');
-const path = require('path');
-const { PATHS } = require('../config/paths');
+import fs from 'fs';
+import path from 'path';
+import { PATHS } from '../config/paths';
 
-function readApiKeyFromFile() {
+export function readApiKeyFromFile(): string | null {
   try {
     if (fs.existsSync(PATHS.API_KEY_FILE)) {
       const apiKey = fs.readFileSync(PATHS.API_KEY_FILE, 'utf8').trim();
@@ -17,7 +17,7 @@ function readApiKeyFromFile() {
   return null;
 }
 
-function saveApiKeyToFile(apiKey) {
+export function saveApiKeyToFile(apiKey: string): boolean {
   try {
     const dir = path.dirname(PATHS.API_KEY_FILE);
     if (!fs.existsSync(dir)) {
@@ -30,9 +30,4 @@ function saveApiKeyToFile(apiKey) {
     console.error('Error saving API key:', error);
     return false;
   }
-}
-
-module.exports = {
-  readApiKeyFromFile,
-  saveApiKeyToFile
-};
+} 

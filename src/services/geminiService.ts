@@ -1,9 +1,28 @@
-const { GoogleGenAI } = require('@google/genai');
-const { readApiKeyFromFile, saveApiKeyToFile } = require('./storageService');
+import { GoogleGenAI } from '@google/genai';
+import { readApiKeyFromFile, saveApiKeyToFile } from './storageService';
+import { createSolutionWindow } from '../windows/solutionWindow';
 
-let geminiAI = null;
+interface SolutionDetails {
+  title: string;
+  language: string;
+  problem: string;
+  code: string;
+  explanation: string;
+  testing: string;
+}
 
-async function initializeGemini(apiKey) {
+interface SolutionResult {
+  details: SolutionDetails;
+}
+
+interface Prompt {
+  name: string;
+  prompt: string;
+}
+
+let geminiAI: GoogleGenAI | null = null;
+
+export async function initializeGemini(apiKey: string): Promise<boolean> {
   try {
     const cleanApiKey = apiKey.trim();
     if (!cleanApiKey) {
@@ -24,9 +43,9 @@ async function initializeGemini(apiKey) {
       }
       
       return true;
-    } catch (apiError) {
+    } catch (apiError: unknown) {
       console.error('API validation error:', apiError);
-      if (apiError.message.includes('401') || apiError.message.includes('403')) {
+      if (apiError instanceof Error && (apiError.message.includes('401') || apiError.message.includes('403'))) {
         throw new Error('Invalid API key');
       }
       throw apiError;
@@ -37,7 +56,7 @@ async function initializeGemini(apiKey) {
   }
 }
 
-async function generateSolution(text) {
+export async function generateSolution(text: string): Promise<SolutionResult> {
   try {
     if (!geminiAI) {
       const apiKey = readApiKeyFromFile();
@@ -67,7 +86,7 @@ async function generateSolution(text) {
       }
     }
 
-    const prompts = [
+    const prompts: Prompt[] = [
       {
         name: 'title',
         prompt: `Analyze the following text and extract or generate a title for the programming problem. If no title exists, generate a descriptive one based on the problem:
@@ -134,20 +153,19 @@ async function generateSolution(text) {
 
     console.log('Starting sequential Gemini API calls...');
     
-    const responses = {};
+    const responses: Record<string, string> = {};
     
     for (const prompt of prompts) {
       try {
         console.log(`Calling API for ${prompt.name}...`);
-        const response = await geminiAI.models.generateContent({
+        const response = await geminiAI?.models.generateContent({
           model: "gemini-2.0-flash",
           contents: prompt.prompt
         });
         
         console.log(`Response received for ${prompt.name}`);
         
-        let responseText = response.candidates[0].content.parts[0].text;
-        
+        let responseText = response?.candidates?.[0]?.content?.parts?.[0]?.text || '';
         responseText = responseText.trim();
         
         if (prompt.name === 'code' || prompt.name === 'explanation') {
@@ -164,14 +182,13 @@ async function generateSolution(text) {
           }
         };
         
-        const { createSolutionWindow } = require('../windows/solutionWindow');
         const solutionWindow = createSolutionWindow();
         if (solutionWindow) {
           solutionWindow.webContents.send('update-solution', partialResult);
         }
       } catch (error) {
         console.error(`Error in ${prompt.name} API call:`, error);
-        console.error('Error details:', error.stack);
+        console.error('Error details:', error instanceof Error ? error.stack : error);
         responses[prompt.name] = `Error generating ${prompt.name}`;
       }
     }
@@ -191,8 +208,8 @@ async function generateSolution(text) {
     };
     
     Object.keys(result.details).forEach(key => {
-      if (result.details[key] === undefined) {
-        result.details[key] = `No ${key} available`;
+      if (result.details[key as keyof SolutionDetails] === undefined) {
+        result.details[key as keyof SolutionDetails] = `No ${key} available`;
       }
     });
     
@@ -207,14 +224,9 @@ async function generateSolution(text) {
         language: 'Error',
         problem: 'Error',
         code: 'Error generating solution',
-        explanation: `An error occurred: ${error.message}\n\nPlease check your internet connection and try again.`,
+        explanation: `An error occurred: ${error instanceof Error ? error.message : 'Unknown error'}\n\nPlease check your internet connection and try again.`,
         testing: 'Try again'
       }
     };
   }
-}
-
-module.exports = {
-  initializeGemini,
-  generateSolution
-};
+} 

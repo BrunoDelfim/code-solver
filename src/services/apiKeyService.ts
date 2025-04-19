@@ -1,7 +1,7 @@
-const { readApiKeyFromFile } = require('./storageService');
-const { initializeGemini } = require('./geminiService');
+import { readApiKeyFromFile } from './storageService';
+import { initializeGemini } from './geminiService';
 
-async function loadApiKey() {
+export async function loadApiKey(): Promise<string | null> {
     try {
         const apiKey = readApiKeyFromFile();
         if (apiKey) {
@@ -15,8 +15,4 @@ async function loadApiKey() {
         console.error('Error loading API key:', error);
         return null;
     }
-}
-
-module.exports = {
-    loadApiKey
-}; 
+} 

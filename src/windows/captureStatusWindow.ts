@@ -1,17 +1,28 @@
-const { BrowserWindow } = require('electron');
-const path = require('path');
-const { PATHS } = require('../config/paths');
-const { saveWindowPosition, getWindowPosition } = require('../services/windowPositionService');
+import { BrowserWindow } from 'electron';
+import path from 'path';
+import { PATHS } from '../config/paths';
+import { saveWindowPosition, getWindowPosition } from '../services/windowPositionService';
 
-let captureStatusWindow = null;
+interface StatusUpdate {
+  total: number;
+  processing?: string;
+  hint?: string;
+}
 
-function createCaptureStatusWindow() {
+interface WindowPosition {
+  x: number;
+  y: number;
+}
+
+let captureStatusWindow: BrowserWindow | null = null;
+
+function createCaptureStatusWindow(): BrowserWindow | null {
   if (captureStatusWindow && !captureStatusWindow.isDestroyed()) {
     return captureStatusWindow;
   }
 
   const savedPosition = getWindowPosition('status');
-  const defaultPosition = { x: 10, y: 10 };
+  const defaultPosition: WindowPosition = { x: 10, y: 10 };
 
   captureStatusWindow = new BrowserWindow({
     width: 300,
@@ -36,8 +47,10 @@ function createCaptureStatusWindow() {
   captureStatusWindow.loadFile(path.join(PATHS.PUBLIC, 'capture-status.html'));
 
   captureStatusWindow.on('moved', () => {
-    const position = captureStatusWindow.getPosition();
-    saveWindowPosition('status', { x: position[0], y: position[1] });
+    if (captureStatusWindow) {
+      const position = captureStatusWindow.getPosition();
+      saveWindowPosition('status', { x: position[0], y: position[1] });
+    }
   });
 
   captureStatusWindow.on('closed', () => {
@@ -47,37 +60,39 @@ function createCaptureStatusWindow() {
   return captureStatusWindow;
 }
 
-function updateCaptureStatus(status) {
+function updateCaptureStatus(status: StatusUpdate): void {
   if (captureStatusWindow && !captureStatusWindow.isDestroyed()) {
     captureStatusWindow.webContents.send('capture-update', status);
   }
 }
 
-function showCaptureStatus() {
+function showCaptureStatus(): void {
   const window = createCaptureStatusWindow();
   if (window) {
     window.show();
   }
 }
 
-function hideCaptureStatus() {
+function hideCaptureStatus(): void {
   if (captureStatusWindow && !captureStatusWindow.isDestroyed()) {
     captureStatusWindow.hide();
   }
 }
 
-function destroyCaptureStatus() {
+function destroyCaptureStatus(): void {
   if (captureStatusWindow && !captureStatusWindow.isDestroyed()) {
     captureStatusWindow.destroy();
     captureStatusWindow = null;
   }
 }
 
-function isStatusWindowVisible() {
-  return captureStatusWindow && !captureStatusWindow.isDestroyed() && captureStatusWindow.isVisible();
+function isStatusWindowVisible(): boolean {
+  return captureStatusWindow !== null && 
+         !captureStatusWindow.isDestroyed() && 
+         captureStatusWindow.isVisible();
 }
 
-module.exports = {
+export {
   createCaptureStatusWindow,
   updateCaptureStatus,
   showCaptureStatus,

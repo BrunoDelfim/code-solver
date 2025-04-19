@@ -1,6 +1,110 @@
 # Contributing to Code Solver
 
-First off, thank you for considering contributing to Code Solver! It's people like you that make Code Solver such a great tool.
+Thank you for your interest in contributing to Code Solver! This document provides guidelines and instructions for contributing to the project.
+
+## 🛠️ Development Setup
+
+### Prerequisites
+
+- Node.js 18 or higher
+- npm 9 or higher
+- Windows 10/11
+- Git
+
+### Dependencies
+
+#### Main Dependencies
+- Electron ^28.2.3
+- TypeScript ^5.3.3
+- @google/genai ^0.2.0
+- electron-store ^8.1.0
+- node-tesseract-ocr ^2.0.2
+- screenshot-desktop ^1.12.7
+- tesseract.js ^5.0.4
+
+#### Development Dependencies
+- @types/electron ^1.6.10
+- @types/node ^20.11.24
+- cross-env ^7.0.3
+- electron-builder ^24.9.1
+- electron-reload ^2.0.0-alpha.1
+- nodemon ^3.1.0
+- rimraf ^5.0.5
+
+### Installation
+
+1. Fork the repository
+2. Clone your fork:
+```bash
+git clone https://github.com/your-username/code-solver.git
+cd code-solver
+```
+
+3. Install dependencies:
+```bash
+npm install
+```
+
+4. Start development server:
+```bash
+npm run dev
+```
+
+## 📝 Code Style
+
+- Follow TypeScript best practices
+- Use ESLint for code linting
+- Maintain consistent indentation (2 spaces)
+- Use meaningful variable and function names
+- Add comments for complex logic
+- Write unit tests for new features
+
+## 🔄 Development Workflow
+
+1. Create a new branch for your feature:
+```bash
+git checkout -b feature/your-feature-name
+```
+
+2. Make your changes and commit them:
+```bash
+git add .
+git commit -m "feat: add your feature description"
+```
+
+3. Push your changes:
+```bash
+git push origin feature/your-feature-name
+```
+
+4. Create a Pull Request on GitHub
+
+## 🧪 Testing
+
+- Manually test all features before submitting PR
+- Verify that all existing functionality still works
+- Test in different scenarios and platforms
+- Document the tests performed in the PR
+
+## 📚 Documentation
+
+- Update README.md if adding new features
+- Document API changes
+- Add comments for complex code
+- Update CONTRIBUTING.md if needed
+
+## 🤝 Pull Request Process
+
+1. Ensure your code follows the style guide
+2. Update documentation if needed
+3. Add tests for new features
+4. Ensure all tests pass
+5. Submit PR with clear description
+6. Reference related issues if any
+
+## 📜 License
+
+By contributing, you agree that your contributions will be licensed under the ISC License.
 
 ## Code of Conduct
 
@@ -34,7 +138,7 @@ If you have a suggestion for the project, we'd love to hear about it! Enhancemen
 * Fill in the required template
 * Do not include issue numbers in the PR title
 * Include screenshots and animated GIFs in your pull request whenever possible
-* Follow the JavaScript styleguide
+* Follow the TypeScript styleguide
 * Include thoughtfully-worded, well-structured tests
 * Document new code
 * End all files with a newline
@@ -48,16 +152,45 @@ If you have a suggestion for the project, we'd love to hear about it! Enhancemen
 * Limit the first line to 72 characters or less
 * Reference issues and pull requests liberally after the first line
 
-### JavaScript Styleguide
+### TypeScript Styleguide
 
-* Use 2 spaces for indentation
-* Use camelCase for variables and functions
-* Use PascalCase for classes
-* Prefer `const` over `let`
-* Place spaces around operators
-* End statements with semicolons
-* Use template literals instead of string concatenation
-* Add trailing commas for cleaner diffs
+* Use TypeScript for all new code
+* Enable strict mode in tsconfig.json
+* Add proper type annotations
+* Use interfaces for data structures
+* Avoid using `any` type
+* Use type guards when necessary
+* Keep renderer code in `src/renderers`
+* Each window should have its own renderer
+* Use proper event typing for IPC communication
+* Handle errors appropriately
+
+Example:
+```typescript
+// Good
+interface SolutionDetails {
+    title: string;
+    language: string;
+    problem: string;
+    code: string;
+    explanation: string;
+    testing: string;
+}
+
+/**
+ * Updates the solution interface with the provided data
+ * @param {Electron.IpcRendererEvent} _event - The IPC event (unused)
+ * @param {SolutionData} data - The solution data to display
+ */
+function updateSolution(_event: Electron.IpcRendererEvent, data: SolutionData): void {
+    // Implementation
+}
+
+// Bad
+function updateSolution(event, data) {  // No type annotation or documentation
+    // Implementation
+}
+```
 
 ### Documentation Styleguide
 
@@ -75,8 +208,8 @@ code-solver/
 │   ├── services/          # App services
 │   ├── utils/             # Utilities
 │   ├── windows/           # Window management
-│   ├── scripts/           # Auxiliary scripts
-│   └── main.js            # Entry point
+│   ├── renderers/         # Renderer processes
+│   └── main.ts            # Entry point
 │
 ├── public/                # Public files
 │   ├── index.html        # Main HTML
@@ -100,41 +233,6 @@ code-solver/
 ├── README.md          # Main documentation
 └── LICENSE            # License
 ```
-
-## Development Setup
-
-1. Fork the repository
-2. Clone your fork:
-```bash
-git clone https://github.com/your-username/code-solver.git
-```
-
-3. Install dependencies:
-```bash
-cd code-solver
-npm install
-```
-
-4. For development, use:
-```bash
-npm run dev
-```
-This will start the application with hot reload enabled using cross-env for environment variables.
-
-5. Create a branch for your changes:
-```bash
-git checkout -b feature/AmazingFeature
-```
-
-5. Make your changes and test them
-6. Push to your fork and submit a pull request
-
-## Testing
-
-* Write test cases for any new functionality
-* Ensure all tests pass before submitting PR
-* Include both unit tests and integration tests where appropriate
-* Test on multiple platforms if possible
 
 ## Additional Notes
 
