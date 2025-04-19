@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>Code Solver v${version}</title>
     <style>
         body {
@@ -118,7 +119,7 @@
         document.title = `Code Solver v${version}`;
 
         function openApiKeyWindow() {
-            ipcRenderer.send('open-api-window');
+            ipcRenderer.send('open-api-key-window');
         }
 
         function openAboutWindow() {

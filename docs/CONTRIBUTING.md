@@ -34,7 +34,7 @@ If you have a suggestion for the project, we'd love to hear about it! Enhancemen
 * Fill in the required template
 * Do not include issue numbers in the PR title
 * Include screenshots and animated GIFs in your pull request whenever possible
-* Follow the JavaScript styleguide
+* Follow the TypeScript styleguide
 * Include thoughtfully-worded, well-structured tests
 * Document new code
 * End all files with a newline
@@ -48,16 +48,45 @@ If you have a suggestion for the project, we'd love to hear about it! Enhancemen
 * Limit the first line to 72 characters or less
 * Reference issues and pull requests liberally after the first line
 
-### JavaScript Styleguide
+### TypeScript Styleguide
 
-* Use 2 spaces for indentation
-* Use camelCase for variables and functions
-* Use PascalCase for classes
-* Prefer `const` over `let`
-* Place spaces around operators
-* End statements with semicolons
-* Use template literals instead of string concatenation
-* Add trailing commas for cleaner diffs
+* Use TypeScript for all new code
+* Enable strict mode in tsconfig.json
+* Add proper type annotations
+* Use interfaces for data structures
+* Avoid using `any` type
+* Use type guards when necessary
+* Keep renderer code in `src/renderers`
+* Each window should have its own renderer
+* Use proper event typing for IPC communication
+* Handle errors appropriately
+
+Example:
+```typescript
+// Good
+interface SolutionDetails {
+    title: string;
+    language: string;
+    problem: string;
+    code: string;
+    explanation: string;
+    testing: string;
+}
+
+/**
+ * Updates the solution interface with the provided data
+ * @param {Electron.IpcRendererEvent} _event - The IPC event (unused)
+ * @param {SolutionData} data - The solution data to display
+ */
+function updateSolution(_event: Electron.IpcRendererEvent, data: SolutionData): void {
+    // Implementation
+}
+
+// Bad
+function updateSolution(event, data) {  // No type annotation or documentation
+    // Implementation
+}
+```
 
 ### Documentation Styleguide
 
@@ -75,8 +104,8 @@ code-solver/
 │   ├── services/          # App services
 │   ├── utils/             # Utilities
 │   ├── windows/           # Window management
-│   ├── scripts/           # Auxiliary scripts
-│   └── main.js            # Entry point
+│   ├── renderers/         # Renderer processes
+│   └── main.ts            # Entry point
 │
 ├── public/                # Public files
 │   ├── index.html        # Main HTML

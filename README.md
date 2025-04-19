@@ -13,6 +13,7 @@ The software is designed to help developers during live coding sessions, as scre
 - ⌨️ Global shortcuts for all functions
 - 🔒 Content protection on windows
 - 🎯 Support for multiple captures
+- 📝 TypeScript support for better code quality
 
 ## ⚡ Shortcuts
 
@@ -26,6 +27,7 @@ The software is designed to help developers during live coding sessions, as scre
 
 - Electron  
 - Node.js  
+- TypeScript
 - Tesseract.js (OCR)  
 - Google Gemini API  
 - HTML/CSS/JavaScript
@@ -59,6 +61,8 @@ npm start
 1. Run the command on terminal:
 ```bash
 npm run build
+# or
+yarn build
 ```
 
 2. The installer will be generated in the `dist` folder
@@ -72,8 +76,8 @@ code-solve/
 │   ├── services/          # App services
 │   ├── utils/             # Utilities
 │   ├── windows/           # Window management
-│   ├── scripts/           # Auxiliary scripts
-│   └── main.js            # Entry point
+│   ├── renderers/         # Renderer processes
+│   └── main.ts            # Entry point
 │
 ├── public/                # Public files
 │   ├── index.html        # Main HTML
@@ -92,6 +96,7 @@ code-solve/
 ├── package.json        # Project configuration
 ├── package-lock.json   # Dependency lock file
 ├── .gitignore         # Git ignore rules
+├── tsconfig.json      # TypeScript configuration
 ├── eng.traineddata    # English OCR data
 ├── por.traineddata    # Portuguese OCR data
 ├── README.md          # Main documentation
@@ -129,3 +134,4 @@ This project is under the ISC license. See the `LICENSE` file for more details.
 - Tesseract.js for the OCR technology
 - Electron for the framework
 - cross-env (Environment variables management)
+- TypeScript team for the amazing type system
