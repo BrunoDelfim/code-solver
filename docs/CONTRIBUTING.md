@@ -81,14 +81,10 @@ git push origin feature/your-feature-name
 
 ## 🧪 Testing
 
-- Run tests before submitting PR:
-```bash
-npm test
-```
-
-- Ensure all tests pass
-- Add new tests for new features
-- Update existing tests if needed
+- Manually test all features before submitting PR
+- Verify that all existing functionality still works
+- Test in different scenarios and platforms
+- Document the tests performed in the PR
 
 ## 📚 Documentation
 
