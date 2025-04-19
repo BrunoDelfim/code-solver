@@ -23,8 +23,6 @@ function createMainWindow() {
     icon: path.join(PATHS.ASSETS, 'icon.ico')
   });
 
-  mainWindow.setContentProtection(true);
-  mainWindow.setVisibleOnAllWorkspaces(true);
   mainWindow.loadFile(path.join(PATHS.PUBLIC, 'index.html')).catch(error => {
     console.error('Error loading index.html:', error);
   });

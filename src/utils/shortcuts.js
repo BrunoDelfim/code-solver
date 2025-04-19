@@ -4,6 +4,8 @@ const { captureAndProcess, clearCapturedTexts } = require('../services/ocrServic
 const { destroyCaptureStatus } = require('../windows/captureStatusWindow');
 const { createSolutionWindow } = require('../windows/solutionWindow');
 const { generateSolution } = require('../services/geminiService');
+const { loadApiKey } = require('../services/apiKeyService');
+const { createApiKeyWindow } = require('../windows/apiKeyWindow');
 
 let isRunning = true;
 let isProcessing = false;
@@ -17,6 +19,24 @@ async function handleCapture() {
     isProcessing = true;
     
     try {
+      console.log('Starting capture process...');
+      const apiKey = await loadApiKey();
+      console.log('API key check result:', apiKey ? 'Found' : 'Not found');
+      
+      if (!apiKey) {
+        console.log('No API key found, opening API key window...');
+        const apiKeyWindow = createApiKeyWindow();
+        console.log('API key window created:', apiKeyWindow ? 'Success' : 'Failed');
+        
+        if (apiKeyWindow) {
+          console.log('Showing API key window...');
+          apiKeyWindow.show();
+          apiKeyWindow.focus();
+        }
+        isProcessing = false;
+        return;
+      }
+
       if (solutionWindow) {
         solutionWindow.hide();
       }
@@ -88,6 +108,13 @@ function registerShortcuts() {
   globalShortcut.register('CommandOrControl+Enter', async () => {
     if (capturedText && !isProcessing) {
       try {
+        const apiKey = await loadApiKey();
+        if (!apiKey) {
+          const apiKeyWindow = createApiKeyWindow();
+          apiKeyWindow.show();
+          return;
+        }
+
         destroyCaptureStatus();
         clearCapturedTexts();
         
