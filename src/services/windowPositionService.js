@@ -17,7 +17,7 @@ function loadWindowPositions() {
       console.log('Loaded positions from file:', positions);
       return positions;
     }
-    console.log('Positions file not found, returning empty object');
+    console.log('Positions file not found, using default positions');
     return {};
   } catch (error) {
     console.error('Error loading positions:', error);

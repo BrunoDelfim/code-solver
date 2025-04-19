@@ -29,10 +29,10 @@ The software is designed to help developers during live coding sessions, as scre
 - Tesseract.js (OCR)  
 - Google Gemini API  
 - HTML/CSS/JavaScript
+- cross-env (Environment variables management)
 
 ## 📋 Requirements
 
-- Node.js 14+  
 - Google Gemini API key  
 - Windows 10/11
 
@@ -128,3 +128,4 @@ This project is under the ISC license. See the `LICENSE` file for more details.
 - Google Gemini for the AI API
 - Tesseract.js for the OCR technology
 - Electron for the framework
+- cross-env (Environment variables management)

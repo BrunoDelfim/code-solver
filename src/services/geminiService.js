@@ -67,7 +67,6 @@ async function generateSolution(text) {
       }
     }
 
-    // Array de prompts sequenciais
     const prompts = [
       {
         name: 'title',

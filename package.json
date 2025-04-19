@@ -5,7 +5,7 @@
     "main": "src/main.js",
     "scripts": {
         "start": "electron .",
-        "dev": "set NODE_ENV=development && electron .",
+        "dev": "cross-env NODE_ENV=development electron .",
         "build": "electron-builder --win --x64",
         "postinstall": "electron-builder install-app-deps"
     },
@@ -14,7 +14,8 @@
     "devDependencies": {
         "electron": "^28.1.0",
         "electron-builder": "^24.9.1",
-        "electron-reload": "^2.0.0-alpha.1"
+        "electron-reload": "^2.0.0-alpha.1",
+        "cross-env": "^7.0.3"
     },
     "dependencies": {
         "@google/genai": "^0.2.0",

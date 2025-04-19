@@ -115,7 +115,13 @@ cd code-solver
 npm install
 ```
 
-4. Create a branch for your changes:
+4. For development, use:
+```bash
+npm run dev
+```
+This will start the application with hot reload enabled using cross-env for environment variables.
+
+5. Create a branch for your changes:
 ```bash
 git checkout -b feature/AmazingFeature
 ```
