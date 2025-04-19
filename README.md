@@ -25,13 +25,36 @@ The software is designed to help developers during live coding sessions, as scre
 
 ## 🛠️ Technologies
 
-- Electron  
-- Node.js  
-- TypeScript
-- Tesseract.js (OCR)  
-- Google Gemini API  
+- Electron ^28.2.3
+- Node.js
+- TypeScript ^5.3.3
+- Tesseract.js ^5.0.4 (OCR)
+- Google Gemini API ^0.2.0
 - HTML/CSS/JavaScript
-- cross-env (Environment variables management)
+- cross-env ^7.0.3 (Environment variables management)
+- electron-store ^8.1.0
+- node-tesseract-ocr ^2.0.2
+- screenshot-desktop ^1.12.7
+
+## 📦 Dependencies
+
+### Main Dependencies
+- Electron ^28.2.3
+- TypeScript ^5.3.3
+- @google/genai ^0.2.0
+- electron-store ^8.1.0
+- node-tesseract-ocr ^2.0.2
+- screenshot-desktop ^1.12.7
+- tesseract.js ^5.0.4
+
+### Development Dependencies
+- @types/electron ^1.6.10
+- @types/node ^20.11.24
+- cross-env ^7.0.3
+- electron-builder ^24.9.1
+- electron-reload ^2.0.0-alpha.1
+- nodemon ^3.1.0
+- rimraf ^5.0.5
 
 ## 📋 Requirements
 

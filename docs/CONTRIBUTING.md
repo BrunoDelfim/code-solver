@@ -1,6 +1,114 @@
 # Contributing to Code Solver
 
-First off, thank you for considering contributing to Code Solver! It's people like you that make Code Solver such a great tool.
+Thank you for your interest in contributing to Code Solver! This document provides guidelines and instructions for contributing to the project.
+
+## 🛠️ Development Setup
+
+### Prerequisites
+
+- Node.js 18 or higher
+- npm 9 or higher
+- Windows 10/11
+- Git
+
+### Dependencies
+
+#### Main Dependencies
+- Electron ^28.2.3
+- TypeScript ^5.3.3
+- @google/genai ^0.2.0
+- electron-store ^8.1.0
+- node-tesseract-ocr ^2.0.2
+- screenshot-desktop ^1.12.7
+- tesseract.js ^5.0.4
+
+#### Development Dependencies
+- @types/electron ^1.6.10
+- @types/node ^20.11.24
+- cross-env ^7.0.3
+- electron-builder ^24.9.1
+- electron-reload ^2.0.0-alpha.1
+- nodemon ^3.1.0
+- rimraf ^5.0.5
+
+### Installation
+
+1. Fork the repository
+2. Clone your fork:
+```bash
+git clone https://github.com/your-username/code-solver.git
+cd code-solver
+```
+
+3. Install dependencies:
+```bash
+npm install
+```
+
+4. Start development server:
+```bash
+npm run dev
+```
+
+## 📝 Code Style
+
+- Follow TypeScript best practices
+- Use ESLint for code linting
+- Maintain consistent indentation (2 spaces)
+- Use meaningful variable and function names
+- Add comments for complex logic
+- Write unit tests for new features
+
+## 🔄 Development Workflow
+
+1. Create a new branch for your feature:
+```bash
+git checkout -b feature/your-feature-name
+```
+
+2. Make your changes and commit them:
+```bash
+git add .
+git commit -m "feat: add your feature description"
+```
+
+3. Push your changes:
+```bash
+git push origin feature/your-feature-name
+```
+
+4. Create a Pull Request on GitHub
+
+## 🧪 Testing
+
+- Run tests before submitting PR:
+```bash
+npm test
+```
+
+- Ensure all tests pass
+- Add new tests for new features
+- Update existing tests if needed
+
+## 📚 Documentation
+
+- Update README.md if adding new features
+- Document API changes
+- Add comments for complex code
+- Update CONTRIBUTING.md if needed
+
+## 🤝 Pull Request Process
+
+1. Ensure your code follows the style guide
+2. Update documentation if needed
+3. Add tests for new features
+4. Ensure all tests pass
+5. Submit PR with clear description
+6. Reference related issues if any
+
+## 📜 License
+
+By contributing, you agree that your contributions will be licensed under the ISC License.
 
 ## Code of Conduct
 
@@ -129,41 +237,6 @@ code-solver/
 ├── README.md          # Main documentation
 └── LICENSE            # License
 ```
-
-## Development Setup
-
-1. Fork the repository
-2. Clone your fork:
-```bash
-git clone https://github.com/your-username/code-solver.git
-```
-
-3. Install dependencies:
-```bash
-cd code-solver
-npm install
-```
-
-4. For development, use:
-```bash
-npm run dev
-```
-This will start the application with hot reload enabled using cross-env for environment variables.
-
-5. Create a branch for your changes:
-```bash
-git checkout -b feature/AmazingFeature
-```
-
-5. Make your changes and test them
-6. Push to your fork and submit a pull request
-
-## Testing
-
-* Write test cases for any new functionality
-* Ensure all tests pass before submitting PR
-* Include both unit tests and integration tests where appropriate
-* Test on multiple platforms if possible
 
 ## Additional Notes
 

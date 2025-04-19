@@ -8,13 +8,6 @@ import { setupIpcHandlers } from './utils/ipcHandlers';
 import { loadApiKey } from './services/apiKeyService';
 import { createTray, destroyTray } from './utils/tray';
 
-if (process.env.NODE_ENV === 'development') {
-    require('electron-reload')(__dirname, {
-        electron: path.join(__dirname, '..', 'node_modules', '.bin', 'electron'),
-        hardResetMethod: 'exit'
-    });
-}
-
 const gotTheLock = app.requestSingleInstanceLock();
 
 if (!gotTheLock) {
